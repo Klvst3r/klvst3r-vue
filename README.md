@@ -278,4 +278,103 @@ CTRL + SHIFT + P
 
 > Reload Window
 
+Para aplicar los estilos de TailwindCSS debemos configurar el archivo tailwind.config.js, en la raiz del proyecto, para ello
+
+```sh
+npx tailwindcss init -p
+```
+
+Puede que arrogle problema y es por que no encuentra el binario o problemas con las dependencias.
+
+Vamos a forzar la instalacion de dependencias.
+
+```sh
+npm install -D tailwindcss postcss autoprefixer
+```
+
+O ejecutar la instalacion manualmente:
+Si npx sigue fallando, intenta usar tailwindcss directamente a través de node:
+
+Bash
+
+./node_modules/.bin/tailwindcss init -p
+O si estás en Windows:
+
+Bash
+
+.\node_modules\.bin\tailwindcss init -p
+
+Si elo anterior falla, podremos instalar el archivo manualmente.
+
+Si los comandos fallan por completo, no te preocupes, puedes crear el archivo a mano. Es un archivo de texto simple:
+
+Creamos un archivo llamado tailwind.config.js en la raíz de nuestro proyecto (donde está el package.json).
+
+Pegamos el siguiente contenido:
+
+```JavaScript
+
+/** @type {import('tailwindcss').Config} \*/
+export default {
+content: [
+"./index.html",
+"./src/**/\*.{vue,js,ts,jsx,tsx}",
+],
+theme: {
+extend: {
+colors: {
+brand: '#1A56DB',
+'fg-brand': '#1A56DB',
+heading: '#111827',
+body: '#6B7280',
+neutral: {
+primary: '#FFFFFF',
+secondary: '#F9FAFB',
+tertiary: '#F3F4F6',
+'primary-medium': '#F3F4F6',
+'tertiary-medium': '#E5E7EB',
+'secondary-soft': '#F9FAFB',
+},
+default: {
+DEFAULT: '#E5E7EB',
+medium: '#D1D5DB',
+}
+},
+borderRadius: {
+'base': '0.5rem',
+}
+},
+},
+plugins: [],
+}
+```
+
+Crea otro archivo llamado postcss.config.js en la misma carpeta:
+
+```JavaScript
+
+export default {
+plugins: {
+tailwindcss: {},
+autoprefixer: {},
+},
+}
+
+```
+
+Reinicia tu servidor de desarrollo
+Una vez creados los archivos, detén tu terminal (Ctrl + C) y vuelve a ejecutar:
+
+```Bash
+
+npm run dev
+```
+
+¿Cómo saber si funcionó?
+Si el archivo tailwind.config.js está bien configurado, el botón de Home debería ponerse azul inmediatamente. Si los colores siguen sin aparecer, revisa que en el archivo src/main.js tengas la línea: import './assets/main.css' (o el nombre de tu archivo CSS principal).
+
 ## Learning Resources
+
+```
+
+```

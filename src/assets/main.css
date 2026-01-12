@@ -1,1 +1,5 @@
 @import 'tailwindcss';
+
+/* Si queremos seguir usando nuestro archivo tailwind.config.js con v4, 
+   debemos importarlo explícitamente así: */
+@config "../../tailwind.config.js";
