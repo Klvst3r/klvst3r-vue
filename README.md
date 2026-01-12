@@ -259,4 +259,23 @@ cargamos
 
 y podremos visualizar correcta la visualiación en el navegador
 
+## Template:
+
+Para el Navbar
+https://flowbite.com/docs/components/navbar/
+
+Usamoss este NavBar
+
+User menu dropdown
+
+## Extensiones para TailwindCSS
+
+Tailwind CSS IntelliSense
+
+## Importacion de componentes en Vue
+
+CTRL + SHIFT + P
+
+> Reload Window
+
 ## Learning Resources
