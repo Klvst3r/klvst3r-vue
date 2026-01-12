@@ -170,3 +170,93 @@ npm run lint
 ```
 
 ## Recommended IDE Setup
+
+## Template TailwindCSS
+
+This project uses [Tailwind CSS](https://tailwindcss.com) version 2.2.19 and relies on PostCSS for compatibility with older browsers. You may use any IDE or editor that supports [PostCSS](https://github.com/postcss/postcss) and [Tailwind CSS](https://tailwindcss.com/docs/installation) syntax.
+
+La pagina de la plantilla esta en:
+
+flowbite.com
+https://flowbite.com/
+
+Al usar TailwindCSS se debe instalar la libreria
+
+## TailwindCSS
+
+https://tailwindcss.com/
+
+Para instalar TailwindCSS a nuestro proyecto nos indica el proceso si es que tenemos vite, tambien tenemos una guia para frameworks populares, pero vamos a instalarlo con la guia que aparece como primera opcion
+
+1. Lo primero es instalar Tailwindcss via npm
+
+Ejecutamos
+
+```sh
+npm install tailwindcss @tailwindcss/vite
+
+```
+
+2. Teniendo instalado tailwindcss y @tailwindcss/vite, vamos a crear un archivo de configuracion para tailwindcss, abrimos
+
+vite.config.js
+
+y de la base siguiente:
+
+import { fileURLToPath, URL } from 'node:url'
+
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import vueDevTools from 'vite-plugin-vue-devtools'
+
+// https://vite.dev/config/
+export default defineConfig({
+plugins: [
+vue(),
+vueDevTools(),
+],
+resolve: {
+alias: {
+'@': fileURLToPath(new URL('./src', import.meta.url))
+},
+},
+})
+
+importamos tailwindcss
+
+import tailwindcss from '@tailwindcss/vite'
+
+dentro del codigo, una vez importado nos centramos en la sección que dice plugins: Pegando lo siguiente,
+
+plugins: [vue(), vueDevTools(), tailwindcss()],
+
+3. Lo proximo es ir al archivo css principal e incluir lo siguiente:
+
+@import "tailwindcss";
+
+El archivo es:
+
+src/assets/main.css
+
+4. En teoria ya tenemos instalado Tailwind, se recomienda iniciar el proceso de construccion
+
+```sh
+npm run dev
+```
+
+5. pero para verificar esto, vamos a abrir la vita home
+
+src/modules/public/submodules/home/views/HomeView.vue
+
+cargamos
+<template>
+
+  <div>
+    <h1 class="text-red-500">Bienvenido a la página principal</h1>
+    Hola desde el submódulo HomeView
+  </div>
+</template>
+
+y podremos visualizar correcta la visualiación en el navegador
+
+## Learning Resources
