@@ -439,3 +439,44 @@ Para manipular el modo dark / ligth agregamos los estilos en el archivo tailwind
     },
   },
 ```
+
+## Dashboard
+
+Referencia
+https://flowbite.com/docs/components/sidebar/
+
+Sidebar with navbar
+
+si necesitamos los estlos de Flowbite instalamos el pligin para configurarlo
+
+```bash
+npm install flowbite
+```
+
+Luego lo agregamos al archivo tailwind.config.js:
+
+````js
+// tailwind.config.js
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{vue,js,ts,jsx,tsx}",
+    "./node_modules/flowbite/**/*.js" // IMPORTANTE: Para que las clases de Flowbite funcionen
+  ],
+  theme: {
+    extend: {
+      colors: {
+        // Flowbite usa a menudo tonos de azul o gris específicos
+        // Si tu código usa "neutral-primary", debes definirlos aquí:
+        primary: {
+          "50": "#eff6ff", "100": "#dbeafe", "200": "#bfdbfe", "300": "#93c5fd", "400": "#60a5fa", "500": "#3b82f6", "600": "#2563eb", "700": "#1d4ed8", "800": "#1e40af", "900": "#1e3a8a", "950": "#172554"
+        }
+      }
+    },
+  },
+  plugins: [
+    require('flowbite/plugin') // Carga los componentes interactivos y estilos base
+  ],
+}
+          ```
+````

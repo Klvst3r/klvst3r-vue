@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import publicRoutes from '@/modules/public/router/index'
 import authRoutes from '@/modules/auth/router/index'
-import adminRoutes from '@/modules/admin/router/index'
+import adminRoutes from '@/modules/admin/submodules/dashboard/router/index.js'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,7 +19,10 @@ const router = createRouter({
     },
     {
       path: '/admin',
-      children: adminRoutes,
+      component: () => import('@/layouts/admin/AdminLayout.vue'),
+      children: [
+        ...adminRoutes, // Desestructuramos el array que exportamos
+      ],
     },
   ],
 })
