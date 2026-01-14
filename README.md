@@ -701,3 +701,26 @@ se agrega una redirección
 path: '',
 redirect: { name: 'auth-login' },
 },
+
+Finalemnte
+
+src/modules/public/home/views/HomeView.vue
+modificamos el clor del estilo del titulo
+
+<template>
+  <div>
+    <h1 class="text-blue-700">Bienvenido a la página principal</h1>
+    Hola desde el submódulo HomeView
+  </div>
+</template>
+
+## Modulos compartidos
+
+Los modulos compartidos deben estar disponibles para cualquier modulo
+Por ejemplo un componente para el logotipo, por que se repite en difeentes lugares, en auth, en admin, en dashboard.
+
+Por esto es conveniente llevarlo a un componente, y solo debe hacerse referencia a este componente, asi si se cambia el logotipo se cambia una sola vez y donde se refiera se cambiara en automatico.
+
+Otro ejemplo es el dropdown del nav
+
+Otro modulo compartido es el formulario, con botones link, todo esto se pude llevar a compoenentes con modulso compartidos, con importa solo se utilizarran al ser llamados.
