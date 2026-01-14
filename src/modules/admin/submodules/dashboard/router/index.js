@@ -4,7 +4,7 @@
 const routes = [
   {
     path: 'dashboard',
-    name: 'dashboard', //componente que se va a renderizar
+    name: 'admin.dashboard', //componente que se va a renderizar
     component: () =>
       import('@/modules/admin/submodules/dashboard/views/Dashboard.vue'),
   },

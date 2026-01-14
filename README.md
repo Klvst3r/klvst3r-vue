@@ -480,3 +480,91 @@ export default {
 }
           ```
 ````
+
+## Iconos del Aside Menu
+
+Inicialmente se tienen iconos en formato svg, si se utilizan algunos por ejemplo de otra libreria, entonces, vamos aapoyarnos de
+
+https://fontawesome.com/
+
+Lo ideal es crearse una cuenta, y partiendo que ya tengo unkit para agregar a mi proyecto
+
+https://fontawesome.com/kits/b5b1e6b401/setup
+
+Vamos al archivo index.html
+
+y en el head pegamos nustro kit referido.
+
+<script src="https://kit.fontawesome.com/b5b1e6b401.js" crossorigin="anonymous"></script>
+
+con esto ya tendriamos fontawesome disponible en nuestro proyecto, para poder utilizarlo en el aside menu, vamos a la carpeta `src/assets/icons` y vamos a crear un archivo `font-awesome.js` y vamos a pegar el siguiente codigo
+
+lo proximo a realizar es lo siguiente
+
+En AdminAside, sustituimos:
+
+<svg
+              class="w-5 h-5 transition duration-75 group-hover:text-fg-brand"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+
+En la seccion de iconos de fontawesome, buscamos dashboard
+
+https://fontawesome.com/icons
+
+Buscamos un icono de Dashboard
+<i class="fa-solid fa-gauge"></i>
+
+        <RouterLink
+            :to="{
+              name: 'admin.dashboard',
+            }"
+            activeClass="bg-gray-100"
+            class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+          >
+
+            <span class="inline-flex w-6 h-6 jistify-center items-center">
+              <i class="fa-solid fa-gauge"></i>
+            </span>
+            <span class="ms-3">Dashboard</span>
+          </RouterLink>
+
+,
+
+Tenemos nuestro icono integrado de Fontawesome
+Y podremos construir un compoente en
+
+src/layouts/admin/components/AdminNavLink.vue colocamos los estilos y funcionalidad al da click
+
+<script setup>
+import RouterLink from 'vue-router'
+</script>
+
+<template>
+  <RouterLink
+    activeClass="bg-gray-100"
+    class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+  >
+    <slot></slot>
+  </RouterLink>
+</template>
+
+y en adminiAside
+
+<li>
+          <AdminNavLink
+            :to="{
+              name: 'admin-dashboard',
+            }"
+          >
+            <span class="inline-flex w-6 h-6 jistify-center items-center">
+              <i class="fa-solid fa-gauge"></i>
+            </span>
+            <span class="ms-3">Dashboard</span>
+          </AdminNavLink>
+        </li>
