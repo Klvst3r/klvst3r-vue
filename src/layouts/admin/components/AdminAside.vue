@@ -1,6 +1,4 @@
-<script setup lang="ts">
-import Dashboard from '@/modules/admin/submodules/dashboard/views/Dashboard.vue'
-</script>
+<script setup></script>
 
 <template>
   <aside
