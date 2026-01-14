@@ -4,7 +4,7 @@ import { RouterView } from 'vue-router'
 //Para que funcionen los Dropdowns y sidebars hay que inicalizar Flowbite
 import { onMounted } from 'vue'
 import { initFlowbite } from 'flowbite'
-import Dashboard from '@/modules/admin/submodules/dashboard/views/Dashboard.vue'
+//import Dashboard from '@/modules/admin/dashboard/views/Dashboard.vue'
 import AdminNav from '@/layouts/admin/components/AdminNav.vue'
 import AdminAside from '@/layouts/admin/components/AdminAside.vue'
 

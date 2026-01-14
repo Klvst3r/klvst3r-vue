@@ -568,3 +568,136 @@ y en adminiAside
             <span class="ms-3">Dashboard</span>
           </AdminNavLink>
         </li>
+
+## Reorganización de carpetas
+
+Para la organizacion de las carpetas del modulo public/submodules, esta desaparece y en consecuenta los sobmodulos about, blog, contact y home pasaran a public directamente.
+
+Para asegurar el cambio debemos considerar que vite no esta corriendo
+Quedando la estructura
+
+/src/modules/public
+── about
+│   ├── router
+│   │   └── index.js
+│   └── views
+│   └── AboutView.vue
+├── blog
+│   ├── router
+│   │   └── index.js
+│   └── views
+│   └── BlogView.vue
+├── components
+├── contact
+│   ├── router
+│   │   └── index.js
+│   └── views
+│   └── ContactView.vue
+├── home
+│   ├── router
+│   │   └── index.js
+│   └── views
+│   └── HomeView.vue
+├── router
+│   └── index.js
+├── stores
+└── views
+└── HomeView.vue
+
+En el archivo src/modules/public/router/index.js
+Se han cabiado las importaciones por defecto
+
+si verificams en los archivos importados esta ingresando
+
+import aboutRoutes from '@/modules/public/about/router/index.js';
+import blogRoutes from '@/modules/public/submodules/blog/router/index.js';
+import contactRoutes from '@/modules/public/submodules/contact/router/index.js';
+import homeRoutes from '@/modules/public/submodules/home/router/index.js';
+
+en caso de no ser asi, modificar las rutas manualmente
+
+Asi tambien en:
+
+src/modules/public/home/router/index.js
+
+No ha hecho correctamente la importaciṕn
+component: () => import('@/modules/public/submodules/home/views/HomeView.vue'),
+
+Sigue llamando una vista submodules, modificamos a
+
+component: () => import('@/modules/public/home/views/HomeView.vue'),
+
+Para llamar corretamente a la vista HomeView
+
+en los demas submodulos ahora yano etan en una carpeta pero se entiende, por que es una forma mas amibagle al momento de realizar las importaciones.
+
+En admin/submodules
+
+En el dashboard
+src/modules/admin/submodules/dashboard ==> src/modules/admin/dashboard
+
+aseguramos la ruta cortrecta
+
+src/modules/admin/dashboard/router/index.js
+
+import dashboardRoutes from '@/modules/admin/dashboard/router/index'
+
+Tamien en
+
+src/modules/admin/dashboard/router/index.js
+
+Importación correcta:
+
+component: () =>
+import('@/modules/admin/dashboard/views/Dashboard.vue'),
+
+Validamos los cambios con npm run dev
+
+Por ultimo hay que modificar el router principal
+
+src/router/index.js
+
+import adminRoutes from '@/modules/admin/dashboard/router/index.js'
+
+finalizamos con la parte de que los usuarios no apunten a
+
+/admin/dashboard sino solamente a /admin
+Nos refiere en el archivo router principal:
+
+component: () => import('@/layouts/admin/AdminLayout.vue'),
+children: [
+...adminRoutes, // Desestructuramos el array que exportamos
+],
+
+Para hacer la redireccion en el oruter principal, añadimos iuna propiedad redirect en el objeto padre de /admin en el archivo src/router/index.js
+
+```js
+{
+path: '/admin',
+component: () => import('@/layouts/admin/AdminLayout.vue'),
+// Al entrar a /admin, redirige automáticamente a la ruta hija con ese nombre
+redirect: { name: 'admin.dashboard' },
+children: [
+...adminRoutes,
+],
+},
+```
+
+Lo mismo con auth, debe redirigirme a login
+
+en src/router/index.js
+
+{
+path: '/auth',
+component: () => import('@/layouts/auth/AuthLayout.vue'),
+children: authRoutes,
+},
+
+y en el modulo
+src/modules/auth/router/index.js
+
+se agrega una redirección
+{
+path: '',
+redirect: { name: 'auth-login' },
+},
