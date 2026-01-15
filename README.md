@@ -724,3 +724,25 @@ Por esto es conveniente llevarlo a un componente, y solo debe hacerse referencia
 Otro ejemplo es el dropdown del nav
 
 Otro modulo compartido es el formulario, con botones link, todo esto se pude llevar a compoenentes con modulso compartidos, con importa solo se utilizarran al ser llamados.
+
+## Logo
+
+Para el logo se crea un componente
+src/modules/shared/components/AppLogo.vue
+
+Importando la estructura del logo. En Public nav solo importamos ese componente
+
+Para el componente del logo en el footer, importa
+<RouterLink to="/">
+<AppLogo />
+</RouterLink>
+Lo mismo en
+http://localhost:5173/auth/login
+
+entonces lo importamos
+
+/home/klvst3r/dev/js/klvst3r-vue/src/layouts/auth/AuthLayout.vue
+y lo mismo para admin
+src/layouts/admin/components/AdminNav.vue
+
+Si quisieramos cambiar de logo, simplemente lo tendremos que hacer en el componente AppLogo

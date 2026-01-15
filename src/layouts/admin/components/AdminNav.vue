@@ -1,4 +1,7 @@
-<script setup></script>
+<script setup>
+import AppLogo from '@/modules/shared/components/AppLogo.vue'
+import { RouterLink } from 'vue-router'
+</script>
 
 <template>
   <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200">
@@ -30,7 +33,7 @@
               />
             </svg>
           </button>
-          <a href="https://flowbite.com" class="flex ms-2 md:me-24">
+          <!-- <a href="https://flowbite.com" class="flex ms-2 md:me-24">
             <img
               src="https://flowbite.com/docs/images/logo.svg"
               class="h-6 me-3"
@@ -40,7 +43,10 @@
               class="self-center text-lg font-semibold whitespace-nowrap dark:text-white"
               >Flowbite</span
             >
-          </a>
+          </a> -->
+          <RouterLink to="/">
+            <AppLogo />
+          </RouterLink>
         </div>
         <div class="flex items-center">
           <div class="flex items-center ms-3">

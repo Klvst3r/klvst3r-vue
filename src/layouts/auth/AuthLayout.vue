@@ -1,5 +1,6 @@
 <script setup>
-import { RouterView } from 'vue-router'
+import { RouterLink } from 'vue-router'
+import AppLogo from '@/modules/shared/components/AppLogo.vue'
 </script>
 <!-- La referencia del template es:
 https://flowbite.com/blocks/marketing/login/ -->
@@ -9,7 +10,7 @@ https://flowbite.com/blocks/marketing/login/ -->
     <div
       class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
     >
-      <a
+      <!-- <a
         href="#"
         class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
       >
@@ -19,7 +20,15 @@ https://flowbite.com/blocks/marketing/login/ -->
           alt="logo"
         />
         Flowbite
-      </a>
+      </a> -->
+
+      <RouterLink
+        to="/"
+        class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+      >
+        <AppLogo />
+      </RouterLink>
+
       <div
         class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
       >
