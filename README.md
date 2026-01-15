@@ -746,3 +746,6 @@ y lo mismo para admin
 src/layouts/admin/components/AdminNav.vue
 
 Si quisieramos cambiar de logo, simplemente lo tendremos que hacer en el componente AppLogo
+
+para el completado de los compoentes utilizamos una extension en vue
+githubcopilot
