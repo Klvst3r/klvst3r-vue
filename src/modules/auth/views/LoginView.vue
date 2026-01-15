@@ -1,22 +1,28 @@
 <script setup>
 import FormInput from '@/modules/shared/components/FormInput.vue'
+import FormLabel from '@/modules/shared/components/FormLabel.vue'
 </script>
 
 <template>
   <div>
     <h1
-      class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
+      class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white mb-6"
     >
       Inicia sesión en tu cuenta
     </h1>
     <form class="space-y-4 md:space-y-6" action="#">
       <div>
-        <label
+        <!-- <label
           for="email"
           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >Your email</label
-        >
+          >Your email</label 
+        >-->
 
+        <FormLabel
+          for="email"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >Your email</FormLabel
+        >
         <FormInput
           type="email"
           name="email"
@@ -27,10 +33,10 @@ import FormInput from '@/modules/shared/components/FormInput.vue'
         />
       </div>
       <div>
-        <label
+        <FormLabel
           for="password"
           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >Password</label
+          >Password</FormLabel
         >
         <FormInput
           type="password"
