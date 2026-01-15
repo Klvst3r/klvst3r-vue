@@ -7,6 +7,8 @@ import { RouterLink } from 'vue-router'
 import PublicNavLink from './PublicNavLink.vue'
 
 import AppLogo from '@/modules/shared/components/AppLogo.vue'
+import DropdownMenu from '@/modules/shared/components/DropdownMenu.vue'
+import DropdownItem from '@/modules/shared/components/DropdownItem.vue'
 
 const openMenu = ref(false)
 </script>
@@ -23,23 +25,51 @@ const openMenu = ref(false)
       <div
         class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse"
       >
-        <button
-          type="button"
-          class="flex text-sm bg-neutral-primary rounded-full md:me-0 focus:ring-4 focus:ring-neutral-tertiary"
-          id="user-menu-button"
-          aria-expanded="false"
-          data-dropdown-toggle="user-dropdown"
-          data-dropdown-placement="bottom"
-        >
-          <span class="sr-only">Open user menu</span>
-          <img
-            class="w-8 h-8 rounded-full"
-            src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-            alt="user photo"
-          />
-        </button>
+        <!-- Llamamos al componente DropdownMenu -->
+        <DropdownMenu>
+          <template #trigger>
+            <button
+              type="button"
+              class="flex text-sm bg-neutral-primary rounded-full md:me-0 focus:ring-4 focus:ring-neutral-tertiary"
+              id="user-menu-button"
+              aria-expanded="false"
+              data-dropdown-toggle="user-dropdown"
+              data-dropdown-placement="bottom"
+            >
+              <span class="sr-only">Open user menu</span>
+              <img
+                class="w-8 h-8 rounded-full"
+                src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+                alt="user photo"
+              />
+            </button>
+          </template>
+          <DropdownItem
+            :to="{
+              name: 'admin.dashboard',
+            }"
+          >
+            Admin
+          </DropdownItem>
+          <DropdownItem
+            :to="{
+              name: 'auth-login', // La referencia es: src/modules/auth/router/index.js
+            }"
+          >
+            Iniciciar sesión
+          </DropdownItem>
+          <DropdownItem
+            :to="{
+              name: 'auth-register',
+            }"
+          >
+            Registro
+          </DropdownItem>
+
+          <!--  Hola mundo -->
+        </DropdownMenu>
         <!-- Dropdown menu -->
-        <div
+        <!-- <div
           class="z-50 hidden bg-neutral-primary-medium border border-default-medium rounded-base shadow-lg w-44"
           id="user-dropdown"
         >
@@ -80,7 +110,7 @@ const openMenu = ref(false)
               >
             </li>
           </ul>
-        </div>
+        </div> -->
         <button
           @click="openMenu = !openMenu"
           type="button"
