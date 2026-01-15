@@ -1,3 +1,7 @@
+<script setup>
+import FormInput from '@/modules/shared/components/FormInput.vue'
+</script>
+
 <template>
   <div>
     <h1
@@ -12,7 +16,8 @@
           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
           >Your email</label
         >
-        <input
+
+        <FormInput
           type="email"
           name="email"
           id="email"
@@ -27,7 +32,7 @@
           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
           >Password</label
         >
-        <input
+        <FormInput
           type="password"
           name="password"
           id="password"
