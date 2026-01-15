@@ -749,3 +749,26 @@ Si quisieramos cambiar de logo, simplemente lo tendremos que hacer en el compone
 
 para el completado de los compoentes utilizamos una extension en vue
 githubcopilot
+
+Cada uno de los elementos que se repiten del formulario o del sistema podemos dividirlo en componentes estos estaran alamcenados en:
+src/modules/shared/components
+
+En donde los vayamos a utlizar solo hay que importarlos por ejemplo en:
+
+<script setup>
+import FormInput from '@/modules/shared/components/FormInput.vue'
+import FormLabel from '@/modules/shared/components/FormLabel.vue'
+import MyButton from '@/modules/shared/components/MyButton.vue'
+</script>
+
+y los utilizamos por ejemplo para los botones
+<FormInput
+          type="email"
+          name="email"
+          id="email"
+          class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="name@company.com"
+          required
+        />
+
+y asi con cada componente requerido

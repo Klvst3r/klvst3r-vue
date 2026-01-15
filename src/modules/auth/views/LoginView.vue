@@ -2,6 +2,7 @@
 import FormInput from '@/modules/shared/components/FormInput.vue'
 import FormLabel from '@/modules/shared/components/FormLabel.vue'
 import MyButton from '@/modules/shared/components/MyButton.vue'
+import TextLink from '@/modules/shared/components/TextLink.vue'
 </script>
 
 <template>
@@ -65,11 +66,7 @@ import MyButton from '@/modules/shared/components/MyButton.vue'
             >
           </div>
         </div>
-        <a
-          href="#"
-          class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
-          >Forgot password?</a
-        >
+        <TextLink href="#">Forgot password?</TextLink>
       </div>
       <!-- <button
         type="submit"
@@ -81,11 +78,11 @@ import MyButton from '@/modules/shared/components/MyButton.vue'
       <MyButton type="submit" color="secondary-"> Sign in </MyButton>
       <p class="text-sm font-light text-gray-500 dark:text-gray-400">
         Don’t have an account yet?
-        <a
+        <!-- <a
           href="#"
           class="font-medium text-blue-600 hover:underline dark:text-blue-500"
-          >Sign up</a
-        >
+          >Sign up</a -->
+        <TextLink href="#">Sign up</TextLink>
       </p>
     </form>
   </div>
