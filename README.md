@@ -772,3 +772,82 @@ y los utilizamos por ejemplo para los botones
         />
 
 y asi con cada componente requerido
+
+## Api
+
+Referencia de consumo
+
+https://github.com/codersfree/vue-api.git
+
+Se deben tener ciertas cosas en la computadora, pra ello los requerimientos de instaación son:
+
+- php
+- bd mysql
+- composer
+- git
+- nodejs
+- npm
+
+## Instalación y despliegue local
+
+1. Clonar el repositorio
+2. Instalar composer
+3. Instalar dependencias mecesarias para trabajar con laravel
+4. Duplicar el archivo de configuracion ejemplo .env.example
+5. Configurar la base de datos en el archivo .env
+   Trabajaremos con sqlite
+6. Generar una key del proyecto
+7. Enlazar el almacenamiento de imagenes
+   php artisan storage:link
+8. Revisar las compilaciones de vite - estilos
+   npm intsall
+   npm run dev
+   npm run build
+9. Ejecutar el servidor
+10. Configurar el proyecto
+11. Ejecutar migraciones
+    php artisan migrate
+
+12. Al no tener habilitados los paquetes de php specificos para SQLite, debemos ejecutar:
+    php -v
+    - si tenemos 8.2.x ejecutamos
+    sudo apt update
+    sudo apt install php8.2-sqlite3
+    
+    - Verificamos la instalacion
+    php -m | grep sqlite
+    
+    - Prepearamos el archivo de configuración de la base de datos
+    touch database/database.sqlite
+    
+13. Iniciar el proyecto
+
+## Instalación y despliegue en servidor
+
+1. Clonar el repositorio
+2. Ejecutar el servidor
+3. Configurar el proyecto
+4. Iniciar el proyecto
+
+## Instalación y despliegue en servidor
+
+1. Clonar el repositorio
+2. Instalar composer
+3. Instalar dependencias mecesarias para trabajar con laravel
+4. Duplicar el archivo de configuracion ejemplo .env.example
+5. Ejecutar el servidor
+6. Configurar el proyecto
+7. Iniciar el proyecto
+
+## Configuración
+
+1. Configurar la base de datos en el archivo `.env`
+2. Configurar el servidor en el archivo `server.php`
+3. Configurar el proyecto en el archivo `vue.config.js`
+
+## Ejecución
+
+1. Ejecutar el servidor en el archivo `server.php`
+2. Ejecutar el proyecto en el archivo `npm run serve`
+
+## Documentación
