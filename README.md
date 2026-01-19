@@ -808,19 +808,25 @@ Se deben tener ciertas cosas en la computadora, pra ello los requerimientos de i
 11. Ejecutar migraciones
     php artisan migrate
 
+Solo un avez, para caciones futuras utilizaremos, crea todas la s tablas y ejecuta los seeders
+php artisan migrate:fresh --seed
+
 12. Al no tener habilitados los paquetes de php specificos para SQLite, debemos ejecutar:
     php -v
     - si tenemos 8.2.x ejecutamos
-    sudo apt update
-    sudo apt install php8.2-sqlite3
-    
+      sudo apt update
+      sudo apt install php8.2-sqlite3
     - Verificamos la instalacion
-    php -m | grep sqlite
-    
+      php -m | grep sqlite
     - Prepearamos el archivo de configuración de la base de datos
-    touch database/database.sqlite
-    
+      touch database/database.sqlite
+
 13. Iniciar el proyecto
+    php artisan serve
+
+14. el almacenamiento cambiarlo de local a publico en archivo .env
+
+FILESYSTEM_DISK=local ==> FILESYSTEM_DISK=public
 
 ## Instalación y despliegue en servidor
 
