@@ -1068,3 +1068,309 @@ Entonces trabajaremos en el
 authService.js
 
 que hace peticiones a la api,
+
+## Probar API con Postman
+
+para añadir, al momento de poner la url de la peticion en POSTMAN también se pudo usar como variable de la colección, de manera que si la url es algo extensa o si cambia, ya no tengamos que ir a todas las peticiones y cambiarlas sino solo desde la VARIABLE DE COLECCIÓN hacerlo y todas las peticiones tomarían la nueva ruta URL desde la variable.
+
+Google: postman
+Es un programa que nos permite hacer peticiones, a l nuestras api, para probar el funcionamiento de estas, de acuerdo al sistema operativo, registrarnos e iniciar sesion:
+
+Podemos descargarlo
+https://www.postman.com/downloads/
+
+O caon la cuenta creada podremos trabajar.
+
+Al iniciar sesión, vamos a workspace y creamos un nuevo espacio, Name: Vue Api (create)
+
+Ingresamos y creamos un acolección, en el boton inferior podemos dejar el nombre New Collection, para despues hacer click en: Add a request
+
+La Api para hacer login, cuenta con 4 rutas dispoibles de tipo post, asi que colocamos el tipo post, para despues ir a la sección de "headers" para establecer los valores de la cabecera, agregamos algunos valores de la cabecera,
+Colocamos en el New Request los siguientes valores
+
+Key Value
+Content-Type application/json
+Acept application/json
+
+Para que sea lo mas parecido a la forma en la cual vamos a ahacer peticiones en axiosConfig.js
+
+Hacia donde vamos a hacer la peticion:
+http://localhost:8000/api
+
+Copiamos y vamos a pegarla, darle un nombre a la peticion:
+POST Login
+POST http://localhost:8000/api
+Headers
+Key Value
+Content-Type application/json
+Accept application/json
+
+Copiamos las peticiones y en nuestra collecion tendremos
+POST login
+POST logout
+POST refresh
+POST me
+
+Guardamos los cambios y queremos copiar y pegar 3 veces la peticion
+
+teniendo nuestra peticions con los siguientes nombres
+
+configurando en axiosConfig.js
+
+Donde indicabamos el tipo de
+
+Debemos asegurarnos que nuestra api, la aplicación de nuestra api, en nuestro caso en el proyecto klvst3r-vue, este inicializado el servidor (Laravel)
+php artisan serve
+
+Para poder recibir las peticiones, al mismo endpoit http://localhost:8000/api
+
+Entonces nuesra colección tiene el conjunto de 4 peticiones o herramientas, la primera para hacer una peticion a la siguiente uri
+http://localhost:8000/api/auth/login
+
+En el cuerpo de la peticion (Postman) seccion Body, tenemos que pasarle la información del usuario y contraeña del login
+form-data
+
+Hemos creado un usuario y pass en nuestro sistema
+
+Email: klvst3r@gmail.com
+Pass: desarrollo
+
+Para completar tu Seeder y probar la conexión entre Vue y Laravel, solo necesitas añadir una nueva instancia de creación dentro del método run.
+
+Aquí tienes el código actualizado y los pasos para ejecutarlo:
+
+1. Actualización del Seeder
+   Modifica tu archivo database/seeders/DatabaseSeeder.php (o el seeder específico que estés usando) de la siguiente manera:
+
+PHP
+
+public function run(): void
+{
+// Usuario de ejemplo previo
+User::factory()->create([
+'name' => 'Victor Arana',
+'email' => 'victor@codersfree.com',
+'password' => bcrypt('12345678'),
+]);
+
+    // Tu propio usuario personalizado
+    User::factory()->create([
+        'name' => 'Klvst3r',
+        'email' => 'klvst3r@gmail.com',
+        'password' => bcrypt('desarrollo'),
+    ]);
+
+} 2. Cómo ejecutar el Seeder
+Dependiendo de si ya tienes datos en la base de datos o si quieres empezar de cero, tienes dos opciones principales desde tu terminal en la carpeta raíz de Laravel:
+
+Opción A: Ejecutar solo los seeders (si ya migraste) Si ya tienes las tablas creadas y solo quieres insertar estos usuarios, ejecuta:
+
+Bash
+
+php artisan db:seed
+Opción B: Refrescar todo (Recomendado para pruebas limpias) Como estás usando SQLite, es muy rápido borrar todo y volver a crear las tablas con los datos nuevos. Esto asegura que no haya correos duplicados si intentas correr el seeder varias veces:
+
+Bash
+
+php artisan migrate:fresh --seed 3. Verificación en SQLite
+Dado que tu base de datos está en /home/klvst3r/dev/js/vue-api/database/database.sqlite, puedes verificar rápidamente que el usuario existe usando la CLI de SQLite:
+
+Bash
+
+sqlite3 database/database.sqlite "SELECT name, email FROM users;"
+Proceso de Comunicación API
+Ahora que tienes el usuario, cuando hagas la petición POST desde Vue (usando Axios o Fetch) hacia tu endpoint de login en Laravel, asegúrate de enviar las credenciales exactas:
+
+Email: klvst3r@gmail.com
+
+Password: desarrollo
+
+Si no tienes instalado el cliente de SQLite en tu Debian, tienes dos caminos principales: instalar la herramienta (que es muy ligera) o usar una función de Laravel para consultarlo sin instalar nada externo.
+
+Aquí tienes las opciones:
+
+Opción 1: Usar Laravel Tinker (La más fácil)
+Laravel incluye Tinker, una consola interactiva que te permite interactuar con la base de datos usando código PHP. No necesitas instalar nada extra en Debian.
+
+En tu terminal, dentro de la carpeta de tu proyecto, ejecuta:
+
+Bash
+
+php artisan tinker
+Una vez que se abra el prompt interactivo, escribe lo siguiente y presiona Enter:
+
+PHP
+
+User::all(['name', 'email']);
+Esto te devolverá una lista de todos los usuarios registrados en tu archivo .sqlite.
+
+Para salir, escribe exit.
+
+Opción 2: Instalar el CLI de SQLite en Debian
+Si prefieres tener la herramienta instalada para usar el comando que mencionaste originalmente, puedes instalarla rápidamente con apt. Solo necesitas privilegios de superusuario:
+
+Actualiza tus repositorios e instala:
+
+Bash
+
+sudo apt update
+sudo apt install sqlite3
+Ahora ya podrás ejecutar el comando original:
+
+Bash
+
+sqlite3 database/database.sqlite "SELECT name, email FROM users;"
+Opción 3: Usar el comando "db" de Laravel (Reciente)
+Si estás usando una versión reciente de Laravel (9.x, 10.x o 11.x), puedes ejecutar consultas SQL directamente con Artisan:
+
+Bash
+
+php artisan db:select "SELECT name, email FROM users"
+Resumen de flujo para tu Test
+Ya que estás preparando la conexión con Vue, lo ideal es que después de verificar que el usuario existe, pruebes el endpoint de autenticación.
+
+Verificamos
+sqlite3 database/database.sqlite "SELECT name, email FROM users;"
+o via Thinker.
+php artisan tinker
+Psy Shell v0.12.8 (PHP 8.2.30 — cli) by Justin Hileman
+
+> User::all(['name', 'email']);
+> [!] Aliasing 'User' to 'App\Models\User' for this Tinker session.
+> = Illuminate\Database\Eloquent\Collection {#1342
+
+    all: [
+      App\Models\User {#5952
+        name: "Victor Arana",
+        email: "victor@codersfree.com",
+      },
+      App\Models\User {#6217
+        name: "Klvst3r",
+        email: "klvst3r@gmail.com",
+      },
+    ],
+
+}
+
+> Proceguimos a verificar nuestro usuario via Ppostman
+
+Ok, tengo ya mi peticion en postman pero me hacen una recomendación:
+
+When testing an API locally, you need to use the Postman Desktop Agent. You currently have a different Agent selected, which can’t send requests to the Localhost. | Learn More
+
+por lo que considero que es necesario instlar postman en local, que opinas
+
+Esa recomendación de Postman es muy común. Básicamente, la versión web de Postman tiene restricciones de seguridad en el navegador que le impiden "hablar" directamente con tu localhost (tu servidor Laravel).
+
+Tienes tres caminos para solucionar esto, dependiendo de qué tan ligero quieras mantener tu sistema:
+
+1. Instalar Postman Desktop (Lo que te recomiendan)
+   Es la solución más robusta. Al ser una aplicación nativa en Debian, no tiene las restricciones del navegador y puede acceder a localhost:8000 (o el puerto que uses) sin problemas.
+
+Cómo instalarlo en Debian: La forma más sencilla es vía Snap (si lo tienes configurado):
+
+Bash
+sudo snap install postman
+O descargando el binario directamente desde postman.com/downloads.
+
+2. Instalar el "Postman Desktop Agent"
+   Si prefieres seguir usando la interfaz en el navegador, puedes instalar solo el Agent. Es un pequeño programa que corre en segundo plano y actúa como puente entre la web y tu servidor local.
+
+Una vez instalado, en la parte inferior de la web de Postman, cambias el selector de "Cloud Agent" a "Desktop Agent".
+
+3. Alternativa "Light": Extensión "Thunder Client" (Si usas VS Code)
+   Si usas Visual Studio Code, no necesitas instalar Postman. Hay una extensión llamada Thunder Client que es idéntica a Postman pero vive dentro de tu editor.
+
+Es extremadamente rápida.
+
+No requiere agentes ni configuraciones extra para localhost.
+
+Un detalle CRUCIAL para tu test con Laravel
+Independientemente de la herramienta que uses, recuerda que si estás probando una API en Laravel, debes asegurarte de:
+
+Tener el servidor corriendo: php artisan serve.
+
+Headers obligatorios: En Postman, debes agregar estas dos llaves en la pestaña Headers:
+
+Accept: application/json
+
+Content-Type: application/json
+
+Nota: Si no envías el header Accept: application/json, Laravel podría intentar redirigirte a la página de inicio (web) en lugar de devolverte un error JSON si algo falla.
+
+teniendo ya nuestra peticion local en postman, con los parametros del cuerpot:
+
+uri: http://localhost:8000/api/auth/login
+body: form-data
+email: klvst3r@gmail.com
+passwrod: desarrollo
+
+Al hacer la peticion local nos devuelve 200 OK:
+
+{
+"access*token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE3Njg4NDkzMDksImV4cCI6MTc2ODg1MjkwOSwibmJmIjoxNzY4ODQ5MzA5LCJqdGkiOiJSQ2tJTFV5SnRkN3JkNXVNIiwic3ViIjoiMiIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.J1cz2yrF-4*-so0YhEWPekzf8geVGwrWHYNzFUXstPM",
+"token_type": "bearer",
+"expires_in": 3600
+}
+
+Retornara un access token, con el cual vamos a identificarnos en todas las demas peticiones del proyecto klvst3r-vue, es decir, cuando hagamos un apeticion a una ruta que este protegida solo para las personas autenticadas, no vamos a autenticar justamente con, este token, asi que tenemos que autenticarnos con este token, con los datos:
+email y password
+
+Lo que ocurre que en cada peticion mandemos usuario y contraseña, por que un usuario mal intecionado puede estar interceptando las peticiones que hagamos y de esa manera podemos capturar el usuario y contraseña, una ve que captura puede hacer peticiones an uestro nombre, por ello no es necesario mandar usuario y contraseña, por ello haremos una sola peticion, con los fitro de seguridad y una vez retornar un token y al hacer mas peticiones nos identificamos con el acces token, con este token, y si llegasen a capturar el token
+
+Vamos con el segundo endpoint, que son las rutas son hacen las peticiones http hacia nuestro servicio de api (Laravel)
+
+http://localhost:8000/api/auth/refresh
+
+Este endpoint se ha generado para generar un nuevo endpont a partir del token que se tiene :
+
+{
+"access*token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE3Njg4NDkzMDksImV4cCI6MTc2ODg1MjkwOSwibmJmIjoxNzY4ODQ5MzA5LCJqdGkiOiJSQ2tJTFV5SnRkN3JkNXVNIiwic3ViIjoiMiIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.J1cz2yrF-4*-so0YhEWPekzf8geVGwrWHYNzFUXstPM",
+"token_type": "bearer",
+"expires_in": 3600
+}
+
+Este es en el caso de que en nuestra aplicación deseamos agregar la opcion de no cerrar sesion.
+Si no queremos cerrar sesión, el token llegase a cerrarse se va a generar, un nuevo token a paritr del que tenemos
+
+entonces para este en las cabeceras:
+
+agregamos uno mas
+
+key Value
+Authorization bearer bearea eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE3Njg4NDkzMDksImV4cCI6MTc2ODg1MjkwOSwibmJmIjoxNzY4ODQ5MzA5LCJqdGkiOiJSQ2tJTFV5SnRkN3JkNXVNIiwic3ViIjoiMiIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.J1cz2yrF-4\*-so0YhEWPekzf8geVGwrWHYNzFUXstPM
+
+y enviamos, asi a partir del token inicial
+
+{
+"access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvcmVmcmVzaCIsImlhdCI6MTc2ODg1NDEwNywiZXhwIjoxNzY4ODU3NzM5LCJuYmYiOjE3Njg4NTQxMzksImp0aSI6Ik5CTWNCZ3NQQ2kwbk1DT1kiLCJzdWIiOiIyIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.upnoIwsscgUK5KTR4u8PhjnsLXi8Zd5NqbI0gMP-Bas",
+"token_type": "bearer",
+"expires_in": 3600
+}
+
+Se ha generado un nuevo token que servira de igual manera para identificarnos, para verificar esto en la ultima peticion,
+
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvcmVmcmVzaCIsImlhdCI6MTc2ODg1NDEwNywiZXhwIjoxNzY4ODU3NzM5LCJuYmYiOjE3Njg4NTQxMzksImp0aSI6Ik5CTWNCZ3NQQ2kwbk1DT1kiLCJzdWIiOiIyIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.upnoIwsscgUK5KTR4u8PhjnsLXi8Zd5NqbI0gMP-Bas
+
+http://localhost:8000/api/auth/me
+
+POST me
+
+key value
+Content-type application/json
+Accept application/json  
+Authorization bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvcmVmcmVzaCIsImlhdCI6MTc2ODg1NDEwNywiZXhwIjoxNzY4ODU3NzM5LCJuYmYiOjE3Njg4NTQxMzksImp0aSI6Ik5CTWNCZ3NQQ2kwbk1DT1kiLCJzdWIiOiIyIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.upnoIwsscgUK5KTR4u8PhjnsLXi8Zd5NqbI0gMP-Bas
+
+La respuesta sera el mismo usuario con el que estabamos trabajando
+{
+"id": 2,
+"name": "Klvst3r",
+"email": "klvst3r@gmail.com",
+"email_verified_at": "2026-01-19T18:35:20.000000Z",
+"created_at": "2026-01-19T18:35:20.000000Z",
+"updated_at": "2026-01-19T18:35:20.000000Z"
+}
+
+Ese es el fucnionamiento de la api para hacer login
+
+Esto es el comportamiento de la api
