@@ -954,3 +954,70 @@ console.log(error);
 Y cuenta con una que es .finally que se ejecuta siempre, sin importar si la promesa se cumplio o no. En el caso de que quisiera reaizar una acción indistinta de si salio bien o slio mal la peticion, es todo asi de facil es su uso.
 
 ## Configuración de Axios
+
+La parte mas compleja es entender como vamos a hacer las peticiones http, podriamos dirigirnos a la sección de login
+http://localhost:5173/auth/login
+
+La vista del login
+src/modules/auth/views/LoginView.vue
+
+En el script podemos lamar a Axios, podriamos hacer la petcion http, generar la logica, todo desde aca. Es una posibilidad.
+Pero no es la mejor, ya que si queremos hacer una peticion http, vamos a tener que ir a cada una de las vistas y hacer la peticion, y si queremos hacer una modificación, vamos a tener que ir a cada una de las vistas y hacer la modificación.
+Puede tener varias complicaciones.
+ej
+Nosotros vamos a conectarmos a una api:
+http://localhost:8000
+
+Esta api, tiene la anterior url, imaguinemos que las peticione http, las estamos manejando en los componentes, pero si la url cambia, desd vue ninguna de las peticiones http vana a funcionar, e ir acada componente donde se hacen éticiones http, por ejemplo
+LoginView
+
+Y modificar la nueva url, entonces lo ideal es crear un archivo de configuración donde especificamos hacia donde queremos hacer la peticion, si se modifica la url, simplemente modificamos el archivo de configuracion por la nueva url
+
+Entonces, en la carpeta src creamos
+
+una carpeta llamada api/axioConfig.js
+
+dentro llamamos a axios
+import axios from 'axios'
+
+ahora en una variable apiCliente inicializamos axios, mediante un metodo create le pasamos un objeto pasandole las propiedades que queremos que tenga axio
+La base url que queremos hacerle peticiones
+
+http://localhost:8000
+
+Ademas ocmo voy a hacerle peticion a la base del proyecto, todos los endpoints empiezan con el path
+
+http://localhost:8000/api
+
+Si queremos sonultar usuarios
+
+http://localhost:8000/api-post
+
+si consultamos post sera uri post
+
+despues se colocan cabeceras, especificando como vamos a comunicar inforamcion hacia la api, en este caso con formato JSON,
+
+headers: {
+'Content-Type': 'application/json',
+},
+
+y como queremos que nos retorne la inforamción.
+
+headers: {
+'Content-Type': 'application/json',
+Accept: 'application/json',
+},
+
+Al final vamos a exportarlo el api client, para cuando quieramos hacer una peticion api ya no vamos a llamar a axios directamente sino a la definicion de apiClient
+
+configuracion final de axios
+
+import axios from 'axios'
+
+const apiClient = axios.create({
+baseURL: 'https://localhost:8000/api',
+headers: {
+'Content-Type': 'application/json',
+Accept: 'application/json',
+},
+})
