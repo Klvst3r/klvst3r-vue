@@ -856,4 +856,101 @@ FILESYSTEM_DISK=local ==> FILESYSTEM_DISK=public
 1. Ejecutar el servidor en el archivo `server.php`
 2. Ejecutar el proyecto en el archivo `npm run serve`
 
-## Documentación
+## Preparación de aplicación para hacer peticiones http
+
+Podemos hacer peticiones http con fetch, pero vamos a hacerlo con un alibreria con axios
+
+## Instalar axios
+
+En la referencia
+https://axios-http.com/docs/intro
+
+Instalar con dentro de nuestro proyecto Vue, en nuestro caso klvst3r-vue
+npm install axios
+
+## Como se utiliza axios
+
+https://axios-http.com/docs/intro
+
+## Como se utiliza axios en nuestro proyecto
+
+https://axios-http.com/docs/intro
+
+## Como se utiliza axios en nuestro proyecto
+
+https://axios-http.com/docs/intro
+
+## Como se utiliza axios en nuestro proyecto
+
+https://axios-http.com/docs/intro
+
+## Como se utiliza axios en nuestro proyecto
+
+Tenemos que especificar:
+
+Para trabajar con axios, podemos trabajar con las extensiones intellisense / autocomplete, mientras usamos imporacin CommonJS con require usndo:
+
+const axios = require('axios').default;
+// axios.<method> will now provide autocomplete and parameter typings
+
+Ejemplo:
+
+const axios = require('axios');
+
+        // Make a request for a user with a given ID
+        axios.get('/user?ID=12345')
+          .then(function (response) {
+            // handle success
+            console.log(response);
+          })
+          .catch(function (error) {
+            // handle error
+            console.log(error);
+          })
+          .finally(function () {
+            // always executed
+          });
+
+        // Optionally the request above could also be done as
+        axios.get('/user', {
+            params: {
+              ID: 12345
+            }
+          })
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          })
+          .finally(function () {
+            // always executed
+          });
+
+        // Want to use async/await? Add the `async` keyword to your outer function/method.
+        async function getUser() {
+          try {
+            const response = await axios.get('/user?ID=12345');
+            console.log(response);
+          } catch (error) {
+            console.error(error);
+          }
+        }
+
+Lo unico que llamar a axios, especifica que tipo de peticion http quiero hacer (get, post, put, delete ) y especificamos la url a la cual voy a hacerle la peticion.
+
+Ej.
+axios.get('/user?ID=12345')
+
+Axios lo que hace es retornarnos una promesa, caputarla promesa y si es stisfactoria con el metodo then, realizamos una acción, en caso contrario con el metodo catch realizamos otra acción:
+
+.then(function (response) {
+console.log(response);
+})
+.catch(function (error) {
+console.log(error);
+})
+
+Y cuenta con una que es .finally que se ejecuta siempre, sin importar si la promesa se cumplio o no. En el caso de que quisiera reaizar una acción indistinta de si salio bien o slio mal la peticion, es todo asi de facil es su uso.
+
+## Configuración de Axios
