@@ -1021,3 +1021,50 @@ headers: {
 Accept: 'application/json',
 },
 })
+
+## Autenticacion
+
+siguiendo las practicas de responsabilidad unica, creamos
+
+/home/klvst3r/dev/js/klvst3r-vue/src/modules/auth/services/authService.js
+
+Tendra el codigo necesario para hacer peticiones a la api y obtener respuestas de la api
+
+Hay que crear un archivo adicioinal, cuya tarea sera la de crear la logica necesaria para el proceso de autenticacion
+
+src/modules/auth/stores/authStore.js
+
+La funcionalidad de este archivo sera la de generar la logica necearia para el proceso de autenticación
+
+Asi hemos dividido en 4 archivos la petición, para seguir el prinicpio de responsablidad unica, asi si nuestra aplicación crece, si cambia la dirección de la api, modificamos la configuracion de axios en
+
+- axiosConfig.js
+
+Puede que en determinado moento cambie la forma en la cual que tengamos hacer peticiones a la api, cambios en las URI internas
+
+- authService.js
+
+Cambiamos lo que tengamos que cambiar, y no afecta al resto de archivos
+
+El archivo que contiene la logica necesaria para el proceso de autenticacion, no afecta a los archivos que contienen la configuracion de axios ni a los archivos que contienen la logica necesaria para hacer peticiones a la api, ya que no estamos manejando directamente las peticiones a la api, sino que estamos consumiento el authservice que finalemnte es el que se encarga de hacer las peticiones
+
+- authStore.js
+
+Finalmente el LoginView, su unica funcion es mostrar el formulario y recuperar la ifnoramción que el usuario esta colocando en el formuario
+LoginView.vue
+
+si bien es cierto, la tienda se puede colocar directamenbte en el authSotre.js del modulo auth, particularmente sse recomienda colocarlo fuera:
+
+src/modules/auth
+
+Es decir por fuera de los modulos crear una carpeta stores
+
+src/stores/authStore.js
+
+Ahora por que se prefiere colocarlo asi, para que el proceso de autenticación, queremos que este disponible para todos los modulos, por que desde el modulo admin necesitaremos saber que el usuario se encuentra autenticado, desde el modulo public, si esta autenticado, y asi con los submodulos, por eso es preferile colocarlo pora afuera de todos la tienda es para toda la aplicación. Aunque se podria seguir manejando en elmodulo auth y llamrlo desde cualquier lado.
+
+Entonces trabajaremos en el
+
+authService.js
+
+que hace peticiones a la api,
