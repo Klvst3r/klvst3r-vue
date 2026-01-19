@@ -203,6 +203,7 @@ vite.config.js
 
 y de la base siguiente:
 
+```js
 import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
@@ -211,16 +212,14 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
-plugins: [
-vue(),
-vueDevTools(),
-],
-resolve: {
-alias: {
-'@': fileURLToPath(new URL('./src', import.meta.url))
-},
-},
+  plugins: [vue(), vueDevTools()],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
 })
+```
 
 importamos tailwindcss
 
@@ -687,20 +686,26 @@ Lo mismo con auth, debe redirigirme a login
 
 en src/router/index.js
 
+```js
 {
 path: '/auth',
 component: () => import('@/layouts/auth/AuthLayout.vue'),
 children: authRoutes,
 },
 
+```
+
 y en el modulo
 src/modules/auth/router/index.js
 
 se agrega una redirección
+
+```js
 {
 path: '',
 redirect: { name: 'auth-login' },
 },
+```
 
 Finalemnte
 
@@ -895,47 +900,51 @@ const axios = require('axios').default;
 
 Ejemplo:
 
-const axios = require('axios');
+```js
+const axios = require('axios')
 
-        // Make a request for a user with a given ID
-        axios.get('/user?ID=12345')
-          .then(function (response) {
-            // handle success
-            console.log(response);
-          })
-          .catch(function (error) {
-            // handle error
-            console.log(error);
-          })
-          .finally(function () {
-            // always executed
-          });
+// Make a request for a user with a given ID
+axios
+  .get('/user?ID=12345')
+  .then(function (response) {
+    // handle success
+    console.log(response)
+  })
+  .catch(function (error) {
+    // handle error
+    console.log(error)
+  })
+  .finally(function () {
+    // always executed
+  })
 
-        // Optionally the request above could also be done as
-        axios.get('/user', {
-            params: {
-              ID: 12345
-            }
-          })
-          .then(function (response) {
-            console.log(response);
-          })
-          .catch(function (error) {
-            console.log(error);
-          })
-          .finally(function () {
-            // always executed
-          });
+// Optionally the request above could also be done as
+axios
+  .get('/user', {
+    params: {
+      ID: 12345,
+    },
+  })
+  .then(function (response) {
+    console.log(response)
+  })
+  .catch(function (error) {
+    console.log(error)
+  })
+  .finally(function () {
+    // always executed
+  })
 
-        // Want to use async/await? Add the `async` keyword to your outer function/method.
-        async function getUser() {
-          try {
-            const response = await axios.get('/user?ID=12345');
-            console.log(response);
-          } catch (error) {
-            console.error(error);
-          }
-        }
+// Want to use async/await? Add the `async` keyword to your outer function/method.
+async function getUser() {
+  try {
+    const response = await axios.get('/user?ID=12345')
+    console.log(response)
+  } catch (error) {
+    console.error(error)
+  }
+}
+```
 
 Lo unico que llamar a axios, especifica que tipo de peticion http quiero hacer (get, post, put, delete ) y especificamos la url a la cual voy a hacerle la peticion.
 
@@ -944,12 +953,14 @@ axios.get('/user?ID=12345')
 
 Axios lo que hace es retornarnos una promesa, caputarla promesa y si es stisfactoria con el metodo then, realizamos una acción, en caso contrario con el metodo catch realizamos otra acción:
 
+```js
 .then(function (response) {
 console.log(response);
 })
 .catch(function (error) {
 console.log(error);
 })
+```
 
 Y cuenta con una que es .finally que se ejecuta siempre, sin importar si la promesa se cumplio o no. En el caso de que quisiera reaizar una acción indistinta de si salio bien o slio mal la peticion, es todo asi de facil es su uso.
 
@@ -1012,15 +1023,17 @@ Al final vamos a exportarlo el api client, para cuando quieramos hacer una petic
 
 configuracion final de axios
 
+```js
 import axios from 'axios'
 
 const apiClient = axios.create({
-baseURL: 'https://localhost:8000/api',
-headers: {
-'Content-Type': 'application/json',
-Accept: 'application/json',
-},
+  baseURL: 'https://localhost:8000/api',
+  headers: {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  },
 })
+```
 
 ## Autenticacion
 
@@ -1144,6 +1157,7 @@ Aquí tienes el código actualizado y los pasos para ejecutarlo:
 
 PHP
 
+```php
 public function run(): void
 {
 // Usuario de ejemplo previo
@@ -1160,8 +1174,11 @@ User::factory()->create([
         'password' => bcrypt('desarrollo'),
     ]);
 
-} 2. Cómo ejecutar el Seeder
-Dependiendo de si ya tienes datos en la base de datos o si quieres empezar de cero, tienes dos opciones principales desde tu terminal en la carpeta raíz de Laravel:
+}
+```
+
+2. Cómo ejecutar el Seeder
+   Dependiendo de si ya tienes datos en la base de datos o si quieres empezar de cero, tienes dos opciones principales desde tu terminal en la carpeta raíz de Laravel:
 
 Opción A: Ejecutar solo los seeders (si ya migraste) Si ya tienes las tablas creadas y solo quieres insertar estos usuarios, ejecuta:
 
@@ -1235,6 +1252,7 @@ o via Thinker.
 php artisan tinker
 Psy Shell v0.12.8 (PHP 8.2.30 — cli) by Justin Hileman
 
+```bash
 > User::all(['name', 'email']);
 > [!] Aliasing 'User' to 'App\Models\User' for this Tinker session.
 > = Illuminate\Database\Eloquent\Collection {#1342
@@ -1252,7 +1270,12 @@ Psy Shell v0.12.8 (PHP 8.2.30 — cli) by Justin Hileman
 
 }
 
-> Proceguimos a verificar nuestro usuario via Ppostman
+
+>
+
+```
+
+Proceguimos a verificar nuestro usuario via Ppostman
 
 Ok, tengo ya mi peticion en postman pero me hacen una recomendación:
 
@@ -1358,7 +1381,7 @@ POST me
 
 key value
 Content-type application/json
-Accept application/json  
+Accept application/json
 Authorization bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvcmVmcmVzaCIsImlhdCI6MTc2ODg1NDEwNywiZXhwIjoxNzY4ODU3NzM5LCJuYmYiOjE3Njg4NTQxMzksImp0aSI6Ik5CTWNCZ3NQQ2kwbk1DT1kiLCJzdWIiOiIyIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.upnoIwsscgUK5KTR4u8PhjnsLXi8Zd5NqbI0gMP-Bas
 
 La respuesta sera el mismo usuario con el que estabamos trabajando
@@ -1374,3 +1397,35 @@ La respuesta sera el mismo usuario con el que estabamos trabajando
 Ese es el fucnionamiento de la api para hacer login
 
 Esto es el comportamiento de la api
+
+## Reconfiguracion de repositorio Git
+
+Al subir nuestro proyecto a git, ya habiamos intentado configurado antes, pero lo hicimos mediante el protocolo HTTPS en lugar de SSH, y por ello nos pide usuario y contraseña. pasa solcions ello debemos utilizar nuesra llave ssh y actualizar le url de "remote" y verificar la conexión.
+
+Cambiamos la URL de HTTPS a SSH
+
+Ejecutamos el siguiente comando en tu terminal para sobrescribir la configuración actual:
+
+```Bash
+
+git remote set-url origin git@github.com:Klvst3r/vue-api.git
+```
+
+2. Verificar el cambio
+   Para asegurarte de que ahora apunta a la dirección de SSH (la que empieza con git@github.com), ejecuta:
+
+```Bash
+
+git remote -v
+```
+
+Deberiamos ver algo como esto: origin git@github.com:Klvst3r/vue-api.git (fetch) origin git@github.com:Klvst3r/vue-api.git (push)
+
+3. Probar la conexión y subir cambios
+   Ahora intenta hacer el push nuevamente:
+
+```Bash
+
+git push -u origin main
+
+```
