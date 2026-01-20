@@ -1429,3 +1429,182 @@ Deberiamos ver algo como esto: origin git@github.com:Klvst3r/vue-api.git (fetch)
 git push -u origin main
 
 ```
+
+## Servicios de autenticación
+
+Ahora que ya sabesmos el comportamiento de la API con Postman, vamos en authServices, este archivo
+
+src/modules/auth/services/authService.js
+
+Tiene la responsabilidad de hacer peticiones a nuestra API, no va a tener logica, y retornar lo que la API le responda, imporatmos la configuraicon hecha en axiosconfig
+import apiClient from '@/axios/axiosConfig'
+
+export default {
+login(){
+
+    },
+    logout(){
+
+    },
+    refresh(){
+
+    },
+    me(){
+
+    }
+
+}
+
+cada uno de estos metodos, deben hacer una peticion hacia la api, primero accediendo al apiClient, haciendo un apeticion de tipo post, pasandole tamien el usuario y contraseña
+Axios va a recir las peticiones de tipo asincrona
+login(acredentials) {
+//Accedemos primero a apiClient, y leugo hacemos una peticion a la api de tipo post, axios va a recibir peticiones asincronas
+apiClient.post('/auth/login', credentials) //Colocamos los datos faltantes de la uri, y credenciales
+},
+
+axios.get('/user?ID=12345')
+
+axios la recibe de la siguiente manera. si esta se resuelve satisfactoriamente, podemos capturarlo con le metodo tehn o en caso contrario con el metodo catch.
+axios.get('/user?ID=12345')
+.then(function (response) {
+// handle success
+console.log(response);
+})
+.catch(function (error) {
+// handle error
+console.log(error);
+})
+.finally(function () {
+// always executed
+});
+
+Aunque puede trabajar de forma mas intuitiva con Async/await, revisado anteriormente en temas de peticiones asincronas. en el proyecto anterios de vue3
+
+Si queremos trabajar con Asyn/await y leugo colocar la pabra await, es decirle a que si la promesa se resuleve, antes de continuar.
+async login(acredentials) {
+//Accedemos primero a apiClient, y leugo hacemos una peticion a la api de tipo post, axios va a recibir peticiones asincronas
+await apiClient.post('/auth/login', credentials) //Colocamos los datos faltantes de la uri, y credenciales
+},
+
+Ahora, de forma resumida, es indicar a axios que espera que la promesa se resuelva, antes de continuar. esta promesa puede devolverse satisfactoriamente, o dar un error, y eso se puede caputrar con un try catch.
+
+async login(acredentials) {
+try {
+} catch (error) {}
+await apiClient.post('/auth/login', credentials) //Colocamos los datos faltantes de la uri, y credenciales
+},
+
+Cambiamos dentro del try,
+
+async login(acredentials) {
+try {
+await apiClient.post('/auth/login', credentials) //Colocamos los datos faltantes de la uri, y credenciales,
+} catch (error) {}
+},
+
+Si la promesa se resolvio satisfactoriamente, vamos a capturar esa respuesta en una constante llamada response
+
+async login(acredentials) {
+try {
+const response = await apiClient.post('/auth/login', credentials) //Colocamos los datos faltantes de la uri, y credenciales,
+} catch (error) {}
+},
+
+y ahora lo que tenemos que hacer e rertotnar dicha respuesta
+
+const response = await apiClient.post('/auth/login', credentials) //Colocamos los datos faltantes de la uri, y credenciales,
+
+      return response
+
+Ahora cuando nosotros haciamos logins, la respuesta lo retorna de la siguiente manera:
+
+{
+"access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE3Njg5MjAzODQsImV4cCI6MTc2ODkyMzk4NCwibmJmIjoxNzY4OTIwMzg0LCJqdGkiOiIyWWRmSzJDTk4yd0RWeFRGIiwic3ViIjoiMiIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.npFxAD3OzUPlPLGqkN-oAZdc-CrWh27i3w8EvCL0-ZE",
+"token_type": "bearer",
+"expires_in": 3600
+}
+
+Ahora cuando hacemos petiionescon axios, la respuesta lo encapsula dentro de una propiedad llamada data, para acceder entonces a este valor hacemos:
+
+return response.data
+
+Indicamos, retorname la data, de esta respuesta
+
+} catch (error) {}
+
+Cuando hay errores en la peticion, vamos a capturar ese error, dentro de la variable error, pero la data del error, esta dentro de la respuesta del campo data. entonces si hay un error, que retorne el error, de la siguente manera, accediendo al response y devolveindo la data.
+
+catch (error) {
+return error.response.data;
+}
+
+Esto seria todo respecto a esta peticion.
+
+Para las peticiones de logout, de refresh y me tambien deben ser funciones asyncronas, asi que hacemos.
+
+export default {
+//Accedemos primero a apiClient, y leugo hacemos una peticion a la api de tipo post, axios va a recibir peticiones asincronas
+
+async login(acredentials) {
+try {
+const response = await apiClient.post('/auth/login', credentials) //Colocamos los datos faltantes de la uri, y credenciales,
+
+      return response.data
+    } catch (error) {
+      return error.response.data
+    }
+
+},
+async logout() {
+try {
+const response = await apiClient.post('/auth/logout') //no pasamos ninguna credencial
+
+      return response.data
+    } catch (error) {
+      return error.response.data
+    }
+
+},
+async refresh() {
+try {
+const response = await apiClient.post('/auth/refresh')
+
+      return response.data
+    } catch (error) {
+      return error.response.data
+    }
+
+},
+async me() {
+//Obtenemos los datos del usuario
+try {
+const response = await apiClient.get('/auth/me')
+
+      return response.data
+    } catch (error) {
+      return error.response.data
+    }
+
+},
+}
+
+El objetivo de crear servicios es, seguir el principio de la responsabiidad unica, tenemos un archivo cuya unica responsabildad e establecer el punto de conexion
+
+1. conexion
+   en Axiosconfg archivo de conexion unica, es establecer el punto de concexion:
+   const apiClient = axios.create({
+   baseURL: 'https://localhost:8000/api',
+   headers: {
+   'Content-Type': 'application/json',
+   Accept: 'application/json',
+   },
+   })
+
+Desde aca se puede agregar algo que se le conoce como interceptores que veremos mas adelante.
+
+2. peticiones a la api
+   Tenemos otro archivo cuya unica funcion es hacer peticiones a la api, simplemente y retorna
+   Archiovo AuthService
+
+3. Logica de funcionalidad
+   Lo siguiente es trabajar la funcionalidad va a ser el agregar logica, poner los puntos de como se debe procesar la inforamcion
