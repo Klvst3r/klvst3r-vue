@@ -9,7 +9,8 @@ export default {
 
       return response.data
     } catch (error) {
-      return error.response.data
+      //return error.response.data  //en lugar de devolver un error que nos devuelva una excepcion
+      throw error.response.data //En esta excepcion, quiero mandar lo que se ha capturado
     }
   },
   async logout() {

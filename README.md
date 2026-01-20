@@ -1608,3 +1608,89 @@ Desde aca se puede agregar algo que se le conoce como interceptores que veremos 
 
 3. Logica de funcionalidad
    Lo siguiente es trabajar la funcionalidad va a ser el agregar logica, poner los puntos de como se debe procesar la inforamcion
+
+## Tienda de autenticación
+
+Vamos a agregar logica, como esta el proceso de realización del login, esto se hace en una tienda, las tiendas no solo almacenan valores sino que es donde vamos a colocar nuestra logica de programación.
+
+La tienda:
+src/stores/authStore.js
+
+aunque se rompe la estructura modular, ya que se tendria que salir de la carpeta auth, para no romper, desistimos y lo deifnimos en el modulo auth
+
+Por ello cambiamos la ruta a:
+src/modules/auth/stores/authStore.js
+
+1. Definimos la tienda
+
+```js
+import { defineStore } from 'pinia'
+
+//Llamamos al servicio definido
+
+import authService from '../services/authService'
+
+//utilizamos la sintaxis de Composition API
+export const useauthStore = defineStore('auth', () => {
+  //Definimos la funcion login pasandole las credenciales, la siguiente funcion tambien es una fucnio asincrona
+  async function login(credentials) {
+    //Acedemos al servicio y ejecutamos el metodo login, esperando que se resulva la siguiente promesa, despues la respuesta del authService la queremos capturar
+    const response = await authService.login(credentials)
+
+    //este metodo puede ser satisfactorio o generar error
+    try {
+      //captura la respuesta, si se produce un error se ejcuta la captura el error del servcio y se retorna el error
+    } catch (error) {
+      //Retorna el error
+      throw error //capturamos el error y seguimos difundiendo el error
+    }
+  }
+})
+```
+
+2. La definicion final es:
+
+src/modules/auth/stores/authStore.js
+
+```js
+import { defineStore } from 'pinia'
+
+//Llamamos al servicio definido
+import authService from '../services/authService'
+
+//utilizamos la sintaxis de Composition API
+export const useauthStore = defineStore('auth', () => {
+  //Definimos mejor una constante token y sea la constante de recuperar el valor
+  const token = ref(localStorage.getItem('access_token') || null) //Si existe la variable que sea el valor al que se asigna al token
+
+  //Primero definimos un apropiedad computada, nos ineresa saber si tiene o no un token
+  //const isAuthenticated = computed(() => (token.value ? true : false)) //Verificamos si lo que se recibe es un valor nullo, verificando el token, esto es lo msmo que lo de la siguiente linea
+  const isAuthenticated = computed(() => !!token.value) // si tenemos ago aca devuelve true en caso contrasrio retorna false
+
+  //Definimos la funcion login pasandole las credenciales, la siguiente funcion tambien es una fucnio asincrona
+  async function login(credentials) {
+    //Acedemos al servicio y ejecutamos el metodo login, esperando que se resulva la siguiente promesa, despues la respuesta del authService la queremos capturar
+    const response = await authService.login(credentials)
+
+    //Quiero almacenar en el local storage ese token, enviado por la api, como parametros la variable del tokem y con un segudo valor el valor que queremos almacenar
+    localStorage.setItem('access_token', response.access_token)
+    //localStorage.setItem('access_token', response.data.access_token)
+
+    //este metodo puede ser satisfactorio o generar error
+    try {
+      //captura la respuesta, si se produce un error se ejcuta la captura el error del servcio y se retorna el error
+    } catch (error) {
+      //Retorna el error
+      throw error //capturamos el error y seguimos difundiendo el error
+    }
+  }
+
+  //Finalmenbte debemos pedir que nos retorne esot s valores
+  return {
+    isAuthenticated, //saber si el usuario esta autenticado
+    login, //metodo para loguear
+  }
+})
+```
+
+Paa wque despues veamos como utilizar esta tienda para realizar el rpoceso de login,
