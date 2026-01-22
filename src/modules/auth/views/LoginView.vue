@@ -25,6 +25,9 @@ const credentials = reactive({
 
 const errores = ref([])
 
+//Validacion para cuando el boton se deshabilita, vamos a saber si se esta enviando el formulario o no
+const isLoading = ref(false)
+
 //Definicimos una funcion con este nombre, una, ya que vamos a hacer una peticion justamente a el metodo handleLogin
 async function handleLogin() {
   //Aqui iria la logica para manejar el login,
@@ -32,6 +35,9 @@ async function handleLogin() {
   // el usuario escribe sus credenciales en el formulario y se hace una peticion a la api
 
   try {
+    //Cabiamos el valor de loading
+    isLoading.value = true
+
     //Cada vez que se envie el formulario
     // 1. Limpiamos los errores previos antes de un nuevo intento
     errores.value = []
@@ -65,6 +71,9 @@ async function handleLogin() {
     }
     //comprobamos si hay elementos faltantes en el login los imprmimos en el alert
     //console.log(errores.value) //mostramos lo que tenemos en la constante errors
+  } finally {
+    //Cabiamos el valor de loading, cambiar el valor nuevamente a false, despues de que se tuvo un arespuesta
+    isLoading.value = false
   }
 }
 </script>
@@ -171,7 +180,9 @@ async function handleLogin() {
         Sign in
       </button> -->
 
-      <MyButton type="submit" color="secondary-"> Sign in </MyButton>
+      <MyButton type="submit" color="secondary-" :disabled="isLoading">
+        Sign in
+      </MyButton>
       <p class="text-sm font-light text-gray-500 dark:text-gray-400">
         Don’t have an account yet?
         <!-- <a

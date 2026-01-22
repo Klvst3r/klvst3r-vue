@@ -1973,3 +1973,11 @@ Entocnes ya teniendo calro esto
 Vamos a buscar Tailwind alert
 
 Para que se coloque antes del formulario, asi cuando exista un error, mostrar la alerta y deshabilitar el boton de ogin para que el usuario sepa que hay un error
+
+Eslo lo hacemos con el valor de isLoading en LogingView
+
+Aparte del try y catch vamos a colocar otro valor finally
+
+Ahora el comportamiento es Envio el formuaro, si hay error, manda la aterta pero restablece el boton
+
+Ahora lo que queremos es que en caso de que el usuario se encuentre autenticado, ya no se permitira entrar al login, a la vista.
