@@ -1,16 +1,22 @@
-import apiClient from '@/axios/axiosConfig'
+// import apiClient from '@/axios/axiosConfig' //nos marca erro por la ruta de la configruaicon de axios cambiamos a:
+//import apiClient from '../../../api/axiosConfig'
+import apiClient from '@/api/axiosConfig' // Sin llaves porque es export default
 
 export default {
   //Accedemos primero a apiClient, y leugo hacemos una peticion a la api de tipo post, axios va a recibir peticiones asincronas
 
-  async login(acredentials) {
+  async login(credentials) {
     try {
       const response = await apiClient.post('/auth/login', credentials) //Colocamos los datos faltantes de la uri, y credenciales,
 
       return response.data
     } catch (error) {
-      //return error.response.data  //en lugar de devolver un error que nos devuelva una excepcion
-      throw error.response.data //En esta excepcion, quiero mandar lo que se ha capturado
+      // Si el servidor respondió con un error (401, 422, etc.)
+      if (error.response) {
+        throw error.response.data
+      }
+      // Si el error es de red o el servidor no responde
+      throw { message: 'Error de conexión con el servidor' }
     }
   },
   async logout() {

@@ -1694,3 +1694,282 @@ export const useauthStore = defineStore('auth', () => {
 ```
 
 Paa wque despues veamos como utilizar esta tienda para realizar el rpoceso de login,
+
+## Proceso de Login
+
+Para el proceso del login, vamos a abrir la vista
+src/modules/auth/views/LoginView.vue
+
+Aun no trabajaremos con el formulario, en la vista vamos a indicar cada vez que intente enviar el formulario es que se va a ajecutar un metodo.
+para ello, utilizamos @submit.prevent=""
+
+<form class="space-y-4 md:space-y-6" action="#">
+Pasa a
+<form class="space-y-4 md:space-y-6" @submit.prevent="handleLogin">
+
+el usuario escribe sus credenciales en el formulario y se hace una peticion a la api
+
+para ello en la definicion en la parte del script definimo el metodo que hara la peticion, pero antes se define la constante
+
+//importamos el metodo reactive, ya que puede cambiar a medida que el usuario vaya escribiendo
+import { reactive } from 'vue'
+
+//variable reactiva de credenciales, inicializada con un objeto con dos propiedades
+const credentials = reactive({
+email: 'klvst3r@gmail.com', //inicializamos a la variable con un correo
+password: 'desarrollo',
+})
+
+//Definicimos una funcion con este nombre, una
+function handleLogin() {
+//Aqui iria la logica para manejar el login,
+//console.log('Login form submitted')
+// el usuario escribe sus credenciales en el formulario y se hace una peticion a la api
+}
+
+una vez hecho estovamos a llamar a nuesra tienda authStore
+
+//Vamos a llamar a la tienda
+import { useAuthStore } from '@/modules/auth/stores/authStore.js' // = '../stores/authStore'
+
+Lo instanciamos, definiendo un aconstante
+
+Definimos una constante y le decimos que queremos utilizar esta tienda aqui
+const authStore = useAuthStore()
+
+ahora vamos ahora si al metodo handleLogin para hacer una tpeticion a este metodo,
+
+Hacemos una peticion al metodo login
+async function login(credentials) { de authStore.js
+src/modules/auth/stores/authStore.js
+
+Al probar nos marca un error ya que en
+
+En tu archivo src/api/axiosConfig.js has creado la constante apiClient, pero no la estás exportando. En JavaScript, si no exportas explícitamente una variable, esta permanece privada dentro de ese archivo.
+
+La Solución
+Agrega la línea export default apiClient al final de tu archivo:
+
+JavaScript
+
+// src/api/axiosConfig.js
+import axios from 'axios'
+
+const apiClient = axios.create({
+baseURL: 'https://localhost:8000/api',
+headers: {
+'Content-Type': 'application/json',
+Accept: 'application/json',
+},
+})
+
+// AGREGA ESTA LÍNEA:
+export default apiClient
+
+¿Por qué esto arregla el error?
+Cuando en tu authService.js escribes: import apiClient from '@/api/axiosConfig'
+
+Vite busca una exportación marcada como default. Como tu archivo no tenía ninguna, te lanzaba el error does not provide an export named 'default'.
+
+Un detalle importante: localhost:8000 y HTTPS
+He notado que tu baseURL es https://localhost:8000/api.
+
+Advertencia: Si tu servidor local (backend) no tiene configurado un certificado SSL real, el navegador bloqueará las peticiones por error de "Certificado no válido".
+
+Sugerencia: Si estás en desarrollo y no tienes SSL configurado en el backend, cambia https por http: baseURL: 'http://localhost:8000/api'
+
+Verificamos que el servicio luzca asi:
+// src/modules/auth/services/authService.js
+import apiClient from '@/api/axiosConfig' // Sin llaves porque es export default
+
+export default {
+login(credentials) {
+return apiClient.post('/login', credentials)
+}
+}
+
+Asi entonces tenemos el mismo problema en la tienda de pinia
+El Problema
+En LoginView.vue tienes algo como esto: import { useAuthStore } from '@/modules/auth/stores/authStore'
+
+Pero en tu archivo de Store, probablemente te falta la palabra clave export o estás usando un export default cuando el componente espera una importación nombrada (con llaves { }).
+
+entonces nuestro archivo de la logica de autentificacion con la tienda (pinia)
+
+el codigio de authStores queda:
+
+import { ref, computed } from 'vue'
+import { defineStore } from 'pinia'
+
+// Llamamos al servicio definido (usando tu ruta relativa o el alias @)
+import authService from '../services/authService'
+
+// Utilizamos la sintaxis de Composition API
+export const useAuthStore = defineStore('auth', () => {
+// Definimos una constante token que recupera el valor del localStorage al iniciar
+const token = ref(localStorage.getItem('access_token') || null)
+
+// Propiedad computada para saber si el usuario está autenticado
+// Retorna true si hay token, false si es null
+const isAuthenticated = computed(() => !!token.value)
+
+// Función asíncrona para manejar el inicio de sesión
+async function login(credentials) {
+try {
+// Accedemos al servicio y ejecutamos el método login
+// Esperamos la respuesta del authService
+const response = await authService.login(credentials)
+
+      // Actualizamos la referencia reactiva para que la UI se entere del cambio
+      token.value = response.access_token
+
+      // Almacenamos en el localStorage el token enviado por la API
+      localStorage.setItem('access_token', response.access_token)
+
+      // Retornamos la respuesta para que el componente pueda usarla (ej. redireccionar)
+      return response
+    } catch (error) {
+      // Capturamos el error del servicio y lo seguimos difundiendo
+      console.error('Error detectado en el Store:', error)
+      throw error
+    }
+
+}
+
+// Retornamos los valores y métodos para que sean accesibles en los componentes
+return {
+token,
+isAuthenticated,
+login,
+}
+})
+
+el resultado en consola es:
+🍍 "auth" store installed 🆕
+
+en LoginView vamos a quietar de los input Text los required, son 3
+
+La idea es que cuando hagamos click en el boton Sig in deberia hacer login, por las credenciales inyectadas incialemnte
+
+Debiendo almacenar en el localstorage el access_token, haciendo el login me debe redireccionar a la pagina de inciio, paa ello entonces:
+
+Tenemos que interacturar con el enrutador, impotando el useRouter
+
+con esta instruccion recuperamos el local storage: localStorage.getItem('access_token')
+
+Podemos comprabarlo si nos dirigimos a la aplicacion princiapal:
+
+src/App.vue
+
+//este access_token estaba en localStorage de src/modules/auth/stores/authStore.js
+console.log(localStorage.getItem('access_token'))
+
+ahora en el login pulsmaos el boton de login y nos redirigira hacia la pagina principal de nuestro sistea
+
+Si pasamos unas credenciales erroenas, no permitira el acceso
+
+## Credenciales incorrectas
+
+LoginView.vue:39 Login failed:
+{message: 'No autorizado', errors: {…}}
+errors:
+email: Array(1)
+0: "Las credenciales proporcionadas son incorrectas."
+length: 1
+[[Prototype]]: Array(0)
+[[Prototype]]: Object
+message: "No autorizado"
+[[Prototype]]: Object
+handleLogin @ LoginView.vue:39
+
+Las credenciales proporcionadas snincorrectas, podemos verificar por ejemplo cuando no enviamos el passrod, nos dara la pauta de cual es el error en si.
+Asi podremos comprobar los mensajes de error,
+
+Esto es para saber si el usuario no envio su correo o lo mando incorrectamente, o con un formato de correo no valido, estos mensajes se mostraran en esta parte.
+
+Asi es como funiona el proceso del Login, pues hemos visto el funcionamiento ya de la api de autenticación.
+
+En la vista LoginView, aun no trabajaremos con el formulario, lo que se revisara es que cada vez que se intente enviar el formulario, lo que ocurrira es que e ejecutara un metodo. Prevenimos el metodo del boton y ejecutaremos un metodo.
+
+## Errores de validación
+
+Vamos a ver como podemos mostrar los errores en el proceso de validación
+
+Para ello regresamos todo para tene prepearado
+
+Quitamos la visualizacioin en la aplicación princiapl
+
+//console.log(localStorage.getItem('access_token'))
+
+Tambien en LoginView, desomentamos el envio de las credenciales
+
+email: 'klvst3r@gmail.com', //inicializamos a la variable con un correo
+password: 'desarrollo',
+
+Entonces nuevamnetye al enviar el login, retorna errores:
+Indicandonos que las contraseña es requerida:
+
+authStore.js:34 Error detectado en el Store:
+{message: 'The email field is required. (and 1 more error)', errors: {…}}
+errors
+:
+{email: Array(1), password: Array(1)}
+message
+:
+"The email field is required. (and 1 more error)"
+
+Los errores son del correo y la contraseña son requeridos
+
+Lo que debemos hacer es
+
+Tranformar los errores retornados:
+
+errors:
+email: ['The email field is required.']
+password: ['The password field is required.']
+[[Prototype]]: Object
+message: "The email field is required. (and 1 more error)"
+
+En un array mas simple y que contenga los valores de lso mensajes.
+Vamos a hacer lo mas simple para elloe en LoginView definimos los siguiete:
+
+Comentamos los errores de salida del consololog
+//console.error('Login failed:', error)
+
+En LoginView imrpimios array de errores y la llave de los errors:
+
+//Vamos a capturar los errores que lleguen
+const responseErrors = error.errors
+
+    //Imprimimos los errores arrays
+    console.log(responseErrors)
+
+    //Vamos a recorrer el array y vaya almacenando el valor de field
+    for (const field in responseErrors) {
+      console.log(field) //Imrpime errores cada vez que encuantra un nuevo elementos dentro del array
+    }
+
+dandono s en la salida de consola
+
+authStore.js:34 Error detectado en el Store:
+{message: 'The email field is required. (and 1 more error)', errors: {…}}
+errors
+:
+{email: Array(1), password: Array(1)}
+message
+:
+"The email field is required. (and 1 more error)"
+[[Prototype]]
+:
+Object
+
+LoginView.vue:45
+{email: Array(1), password: Array(1)}
+LoginView.vue:49 email
+LoginView.vue:49 password
+
+Entocnes ya teniendo calro esto
+
+Vamos a buscar Tailwind alert
+
+Para que se coloque antes del formulario, asi cuando exista un error, mostrar la alerta y deshabilitar el boton de ogin para que el usuario sepa que hay un error

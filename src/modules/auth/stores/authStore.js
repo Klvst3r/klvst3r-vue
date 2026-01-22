@@ -1,38 +1,45 @@
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
-//Llamamos al servicio definido
+// Llamamos al servicio definido (usando tu ruta relativa o el alias @)
 import authService from '../services/authService'
 
-//utilizamos la sintaxis de Composition API
-export const useauthStore = defineStore('auth', () => {
-  //Definimos mejor una constante token y sea la constante de recuperar el valor
-  const token = ref(localStorage.getItem('access_token') || null) //Si existe la variable que sea el valor al que se asigna al token
+// Utilizamos la sintaxis de Composition API
+export const useAuthStore = defineStore('auth', () => {
+  // Definimos una constante token que recupera el valor del localStorage al iniciar
+  //esta es la forma de recuperar local storage: localStorage.getItem('access_token')
+  const token = ref(localStorage.getItem('access_token') || null)
 
-  //Primero definimos un apropiedad computada, nos ineresa saber si tiene o no un token
-  //const isAuthenticated = computed(() => (token.value ? true : false)) //Verificamos si lo que se recibe es un valor nullo, verificando el token, esto es lo msmo que lo de la siguiente linea
-  const isAuthenticated = computed(() => !!token.value) // si tenemos ago aca devuelve true en caso contrasrio retorna false
+  // Propiedad computada para saber si el usuario está autenticado
+  // Retorna true si hay token, false si es null,
+  const isAuthenticated = computed(() => !!token.value)
 
-  //Definimos la funcion login pasandole las credenciales, la siguiente funcion tambien es una fucnio asincrona
+  // Función asíncrona para manejar el inicio de sesión
   async function login(credentials) {
-    //Acedemos al servicio y ejecutamos el metodo login, esperando que se resulva la siguiente promesa, despues la respuesta del authService la queremos capturar
-    const response = await authService.login(credentials)
-
-    //Quiero almacenar en el local storage ese token, enviado por la api, como parametros la variable del tokem y con un segudo valor el valor que queremos almacenar
-    localStorage.setItem('access_token', response.access_token)
-    //localStorage.setItem('access_token', response.data.access_token)
-
-    //este metodo puede ser satisfactorio o generar error
     try {
-      //captura la respuesta, si se produce un error se ejcuta la captura el error del servcio y se retorna el error
+      // Accedemos al servicio y ejecutamos el método login
+      // Esperamos la respuesta del authService
+      const response = await authService.login(credentials)
+
+      // Actualizamos la referencia reactiva para que la UI se entere del cambio
+      token.value = response.access_token
+
+      // Almacenamos en el localStorage el token enviado por la API
+      localStorage.setItem('access_token', response.access_token)
+
+      // Retornamos la respuesta para que el componente pueda usarla (ej. redireccionar)
+      return response
     } catch (error) {
-      //Retorna el error
-      throw error //capturamos el error y seguimos difundiendo el error
+      // Capturamos el error del servicio y lo seguimos difundiendo
+      console.error('Error detectado en el Store:', error)
+      throw error
     }
   }
 
-  //Finalmenbte debemos pedir que nos retorne esot s valores
+  // Retornamos los valores y métodos para que sean accesibles en los componentes
   return {
-    isAuthenticated, //saber si el usuario esta autenticado
-    login, //metodo para loguear
+    token,
+    isAuthenticated,
+    login,
   }
 })
