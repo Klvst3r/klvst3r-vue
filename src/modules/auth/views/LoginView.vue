@@ -19,8 +19,8 @@ const router = useRouter()
 
 //variable reactiva de credenciales, inicializada con un objeto con dos propiedades
 const credentials = reactive({
-  // email: 'klvst3r@gmail.com', //inicializamos a la variable con un correo
-  // password: 'desarrollo',
+  email: '', //inicializamos a la variable con un correo
+  password: '',
 })
 
 const errores = ref([])
@@ -110,7 +110,7 @@ async function handleLogin() {
       </svg>
       <span class="sr-only">Danger</span>
       <div>
-        <span class="font-medium">Ensure that these requirements are met:</span>
+        <span class="font-medium"> ¡'Ups' Ha ocurrido un error! </span>
         <ul class="mt-2 list-disc list-outside space-y-1 ps-2.5">
           <li v-for="(error, index) in errores" :key="index">
             {{ error }}
@@ -133,6 +133,7 @@ async function handleLogin() {
           >Your email</FormLabel
         >
         <FormInput
+          v-model="credentials.email"
           type="email"
           name="email"
           id="email"
@@ -147,6 +148,7 @@ async function handleLogin() {
           >Password</FormLabel
         >
         <FormInput
+          v-model="credentials.password"
           type="password"
           name="password"
           id="password"

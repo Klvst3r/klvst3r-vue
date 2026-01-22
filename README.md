@@ -1981,3 +1981,72 @@ Aparte del try y catch vamos a colocar otro valor finally
 Ahora el comportamiento es Envio el formuaro, si hay error, manda la aterta pero restablece el boton
 
 Ahora lo que queremos es que en caso de que el usuario se encuentre autenticado, ya no se permitira entrar al login, a la vista.
+
+## Recuperar datos del formulario
+
+Ahora vamos a enlazar estas propiedas credentials
+
+const credentials = reactive({
+// email: 'klvst3r@gmail.com', //inicializamos a la variable con un correo
+// password: 'desarrollo',
+})
+
+Con los imput del formulario para poder modificar directamente, desde ahi.
+
+Al utilizar
+
+<FormInput
+v-model="credentials.password"
+
+primero tenemos que definirlo en el componente en este caso:
+src/modules/shared/components/FormInput.vue
+
+<script setup>
+const model = defineModel()
+</script>
+<template>
+  <input
+    v-model="model"
+
+Ahora ya esta correcto
+
+Esto hacer que al cargar el formulario me carga los valores de las credenciales definidos
+
+Por ello
+
+const credentials = reactive({
+email: 'klvst3r@gmail.com', //inicializamos a la variable con un correo
+password: 'desarrollo',
+})
+
+Cambia a
+const credentials = reactive({
+email: '', //inicializamos a la variable con un correo
+password: '',
+})
+
+Para poder llenarlo desde el formulario
+, pulsamos login y nos autenticara llevandono sal home o /
+
+Si inicia sesion por eso redirecciona.
+
+Ahora en el formulario, escribimos contraseñas incorrectas,
+
+Nos envia el mensaje de contraseñas incorrectas:
+
+Danger
+Ensure that these requirements are met:
+Las credenciales proporcionadas son incorrectas.
+
+Pero el mensaje vamos a cambiarlo
+
+En LoginView
+
+Eliminamos el emsaje del aler
+
+<span class="font-medium">Ensure that these requirements are met:</span>
+
+cambiando a
+<span class="font-medium"> ¡'Ups' Ha ocurrido un error! </span>
+
+Lo que sigue es que queremos evitar un usuario ingrese a esta seccion cuando ya previamente ya haya iniciado sesión.
