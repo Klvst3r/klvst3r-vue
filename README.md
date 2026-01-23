@@ -3250,3 +3250,134 @@ En tu Guard usas: next({ name: 'auth-login' }).
 En tu archivo de rutas de auth (src/modules/auth/router/index.js), verifica que la ruta de login se llame exactamente auth-login.
 
 ¿Qué sigue? Prueba ahora escribiendo la URL manual. Si por alguna razón el console.log dice que isAuthenticated es false a pesar de estar logueado, significa que el nombre de la llave en el Store (access_token) podría ser diferente al que recibes de tu API de Laravel (a veces Laravel usa token o original.access_token).
+
+## Mostrar / Coultar contenido a usuarios
+
+Lo que queremos es mostrar o ocultar la informacion del dropdown del usuario dependiendo si estaos autenticados o no
+
+Para ello en la seccion de laoyots
+
+src/layouts/public/components/PublicNav.vue
+
+Aca estan los enlaces de mostrar u ocultar, para ello, lo que se hara es llamar a la tienda por aca
+
+//Llamar al atienda para ocltar opciones del dropdown
+import { useAuthStore } from '@/modules/auth/stores/authStore'
+
+//La vamos a utilizar a traves de una constante
+
+const authStore = useAuthStore();
+
+vamos a la definicion de la tienda:
+src/modules/auth/stores/authStore.js
+
+Y en las opciones del menu en:
+src/layouts/public/components/PublicNav.vue
+
+El que dice admin
+<DropdownItem
+            :to="{
+              name: 'admin.dashboard',
+            }"
+          >
+Admin
+</DropdownItem>
+
+Vamos a encerrarlo dentro de un template
+
+   <template>
+            <DropdownItem
+              :to="{
+                name: 'admin.dashboard',
+              }"
+            >
+              Admin
+            </DropdownItem>
+          </template>
+
+El contenido de este template solo debe mostrarse en el cso de que el usuario se encuentre autenticado
+
+<template v-if="authStore.isLoggedIn">
+
+Accedemos en authStore a su propiedad computada
+
+isAuthenticated
+
+<template v-if="authStore.isAuthenticated">
+
+Entonces mostramos solo cuando el usuario este autenticado.
+
+ahora en:
+
+Encerramos esto en un template
+
+<DropdownItem
+            :to="{
+              name: 'auth-login', // La referencia es: src/modules/auth/router/index.js
+            }"
+          >
+Iniciciar sesión
+</DropdownItem>
+<DropdownItem
+            :to="{
+              name: 'auth-register',
+            }"
+          >
+Registro
+</DropdownItem>
+
+quedando
+
+ <template>
+              <DropdownItem
+              :to="{
+                name: 'auth-login', // La referencia es: src/modules/auth/router/index.js
+              }"
+            >
+              Iniciciar sesión
+            </DropdownItem>
+            <DropdownItem
+              :to="{
+                name: 'auth-register',
+              }"
+            >
+              Registro
+            </DropdownItem>
+          </template>
+a este template le aplicamos el v-else, para que el contenido se mostrara cuando no este autnticado
+
+Verificamos y en el dropdown nolo nos aparece la opcion Admin, por que el usuario esta autenticado.
+
+ahora debajo de la opcion del admin, queremos colocar un boton quediga logout
+
+<template v-if="authStore.isAuthenticated">
+            <DropdownItem
+              :to="{
+                name: 'admin.dashboard',
+              }"
+            >
+              Admin
+            </DropdownItem>
+            <button>
+              
+            </button>
+          </template>
+
+que diga logout, como se reuiqeren algunois estilos, sera un router link por lo que pegamos clases de Public
+
+desde:
+src/modules/shared/components/DropdownItem.vue
+
+cpiamos los estilos del boton
+class="block w-full px-4 py-2 leading-5 text-gray-700 hover:bg-gray-100"
+
+<button class="block w-full px-4 py-2 leading-5 text-gray-700 hover:bg-gray-100" >
+              Logout
+            </button>
+quedando el boton de logout
+
+<button class="block text-left w-full px-4 py-2 leading-5 text-gray-700 hover:bg-gray-100" >
+
+dos botones de admin y logout para cerrar secion.
+
+para ahora vamos a trabar con la ruta del Logout
