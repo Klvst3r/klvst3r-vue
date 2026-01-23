@@ -3381,3 +3381,98 @@ quedando el boton de logout
 dos botones de admin y logout para cerrar secion.
 
 para ahora vamos a trabar con la ruta del Logout
+
+## Loogout
+
+Vamos a ver como cerramos sesion, pero antes de cerrar sesion, pero vamos a solucionar un problema de la seccion pasada, es el sigfuiente ya que en el icono del usuario, queremos eliminar la variable access_token, que se ha generado anteriormente y se a almacenado en el localstorage, para esto.
+
+Hacemos click derecho y en modo desarrollador en la pestaña Aplicacion
+
+en la sección de lacenamiento
+
+En local Storage
+
+accesamos a
+
+http://localhost:5173
+
+Buscamos el acceso_token que hemos generado Seleccionamos y borramos
+
+Si hacemos esto y actualizamos ahora aparece que no se ha iniciado sesion, y podremos dirigir al login.
+
+Entonces podremos iniciar sesion nuevamente, ya que la opcion cambia ahora a Iniciar Sesion
+
+Entonces ahora iniciamos sesion nuyevamente
+
+si bien es cierto que ha inicado sesion, pero sigue apareciendo los botones de iniciar sesion y registrarse. Cuando lo que deberia estar apareciendo admin y logout
+
+ahora se muestran conrrectamente, por que ocurre esto, y es por que en la tienda
+
+src/modules/auth/stores/authStore.js
+
+La forma en la cual nosotros estamos viendo a que un usuario esta autenticado o no es a traves de la propiedad computada, esta propiedad computada verifica si tenemos un token desde local storage y si no tiene el token lo marca como no autenticado.
+isAuthenticated
+
+Esta propiedad computada verifica si tenemos un token el token previamente se ha recuperado desde localstorage y en esta tienda lo marca como autenticado.
+
+y esque si no tiene el token lo marca como no autenticado.
+
+ahora cuando hemos hecho el login en la tienda no hemos actualizado la propiedad
+
+token de
+
+const token = ref(localStorage.getItem('access_token') || null)
+
+al no haberla actualizado lo que esta pasando no ha cambiado la propiedad computada, esto sigue apareciendo como false
+
+Para esto lo que se va a realizar es lo siguiente.
+
+luego de hacer la consylta y ver que todo haya funcionado correctamente lo proximo que vamos a hacer es actualizar el value de ese token para que cambie el estado de autenticado
+
+Ahora, cuando hemos hecho el login
+
+async function login(credentials) {
+try {
+// Accedemos al servicio y ejecutamos el método login
+// Esperamos la respuesta del authService
+const response = await authService.login(credentials)
+
+      // Actualizamos la referencia reactiva para que la UI se entere del cambio
+      token.value = response.access_token
+
+      // Almacenamos en el localStorage el token enviado por la API
+      localStorage.setItem('access_token', response.access_token)
+
+      // Retornamos la respuesta para que el componente pueda usarla (ej. redireccionar)
+      return response
+    } catch (error) {
+      // Capturamos el error del servicio y lo seguimos difundiendo
+      console.error('Error detectado en el Store:', error)
+      throw error
+    }
+
+}
+
+no hemos actualizado la propiedad
+
+const token
+y al no haberla actualizado no ha cambiado la propiedad computada aparece aun como false
+
+const isAuthenticated
+
+lo que haremos es luego de hacer la consulta y despues de que haya funcionado correctamente es necesario actualziar el value de ese token para que cambie el estado de autenticado.
+
+//para el logaut tambien se borra el local storage y actualizamos el token
+token.value = response.access_token;
+
+Para que cambie el estado de autenticado, hacemos la prueba nuevamente
+
+vamos a alamcenamiento local, y lo volvemos a eliminar y actualizamos, inicializamos sesion colocamos credenciales e iniciamos sesion,
+y ahora debe estar el menu de login correctamente
+
+Mostranbdo las copinoes
+admin y logout
+
+Ahora si vemos como hacer el proceso de logout
+
+Para ello vamos a dirigirnos 3:18

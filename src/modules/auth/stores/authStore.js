@@ -27,6 +27,9 @@ export const useAuthStore = defineStore('auth', () => {
       // Almacenamos en el localStorage el token enviado por la API
       localStorage.setItem('access_token', response.access_token)
 
+      //para el logaut tambien se borra el local storage y actualizamos el token
+      token.value = response.access_token;
+
       // Retornamos la respuesta para que el componente pueda usarla (ej. redireccionar)
       return response
     } catch (error) {
