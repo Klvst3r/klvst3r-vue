@@ -27,22 +27,50 @@ export const useAuthStore = defineStore('auth', () => {
       // Almacenamos en el localStorage el token enviado por la API
       localStorage.setItem('access_token', response.access_token)
 
-      //para el logaut tambien se borra el local storage y actualizamos el token
-      token.value = response.access_token;
+      //para el logaut tambien se borra el local storage y actualizamos el token, esto es para cambiar el estado autenticado, despues de hacer login
+      token.value = response.access_token
 
       // Retornamos la respuesta para que el componente pueda usarla (ej. redireccionar)
       return response
     } catch (error) {
       // Capturamos el error del servicio y lo seguimos difundiendo
       console.error('Error detectado en el Store:', error)
-      throw error
+      //throw error
+      throw error.response.data
     }
   }
 
+  //Logout
+
+  async function logout() {
+    try {
+      // Accedemos al servicio y ejecutamos el método logout, pedimos que llame a nuestro servicio
+      // Esperamos la respuesta del authService
+      //const response = await authService.logout()
+      await authService.logout()
+
+      //ahora lo que toca despues de esperar que se resuelva la promesa para eliminar del localstorage esa variable llamada access_token
+      localStorage.removeItem('access_token')
+
+      //Tambien lo que queremos que ocurra es resetear el valor del token para que el estado isAutehticated cambie a false, con esto ceramos lasesion
+      token.value = null
+
+      // Actualizamos la referencia reactiva para que la UI se entere del cambio
+      //token.value = null
+      // Borramos el token almacenado en el localStorage
+    } catch (error) {
+      // Capturamos el error del servicio y lo seguimos difundiendo
+      console.error('Error detectado en el Store:', error)
+
+      //throw error.response.data
+      throw error
+    }
+  }
   // Retornamos los valores y métodos para que sean accesibles en los componentes
   return {
     token,
     isAuthenticated,
     login,
+    logout,
   }
 })

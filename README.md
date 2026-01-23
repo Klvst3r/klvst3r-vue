@@ -204,21 +204,21 @@ vite.config.js
 y de la base siguiente:
 
 ```js
-import { fileURLToPath, URL } from "node:url";
+import { fileURLToPath, URL } from 'node:url'
 
-import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
-import vueDevTools from "vite-plugin-vue-devtools";
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue(), vueDevTools()],
   resolve: {
     alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-});
+})
 ```
 
 importamos tailwindcss
@@ -818,7 +818,6 @@ php artisan migrate:fresh --seed
 
 12. Al no tener habilitados los paquetes de php specificos para SQLite, debemos ejecutar:
     php -v
-
     - si tenemos 8.2.x ejecutamos
       sudo apt update
       sudo apt install php8.2-sqlite3
@@ -902,47 +901,47 @@ const axios = require('axios').default;
 Ejemplo:
 
 ```js
-const axios = require("axios");
+const axios = require('axios')
 
 // Make a request for a user with a given ID
 axios
-  .get("/user?ID=12345")
+  .get('/user?ID=12345')
   .then(function (response) {
     // handle success
-    console.log(response);
+    console.log(response)
   })
   .catch(function (error) {
     // handle error
-    console.log(error);
+    console.log(error)
   })
   .finally(function () {
     // always executed
-  });
+  })
 
 // Optionally the request above could also be done as
 axios
-  .get("/user", {
+  .get('/user', {
     params: {
       ID: 12345,
     },
   })
   .then(function (response) {
-    console.log(response);
+    console.log(response)
   })
   .catch(function (error) {
-    console.log(error);
+    console.log(error)
   })
   .finally(function () {
     // always executed
-  });
+  })
 
 // Want to use async/await? Add the `async` keyword to your outer function/method.
 async function getUser() {
   try {
-    const response = await axios.get("/user?ID=12345");
-    console.log(response);
+    const response = await axios.get('/user?ID=12345')
+    console.log(response)
   } catch (error) {
-    console.error(error);
+    console.error(error)
   }
 }
 ```
@@ -1025,15 +1024,15 @@ Al final vamos a exportarlo el api client, para cuando quieramos hacer una petic
 configuracion final de axios
 
 ```js
-import axios from "axios";
+import axios from 'axios'
 
 const apiClient = axios.create({
-  baseURL: "https://localhost:8000/api",
+  baseURL: 'https://localhost:8000/api',
   headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json",
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
   },
-});
+})
 ```
 
 ## Autenticacion
@@ -1625,28 +1624,28 @@ src/modules/auth/stores/authStore.js
 1. Definimos la tienda
 
 ```js
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia'
 
 //Llamamos al servicio definido
 
-import authService from "../services/authService";
+import authService from '../services/authService'
 
 //utilizamos la sintaxis de Composition API
-export const useauthStore = defineStore("auth", () => {
+export const useauthStore = defineStore('auth', () => {
   //Definimos la funcion login pasandole las credenciales, la siguiente funcion tambien es una fucnio asincrona
   async function login(credentials) {
     //Acedemos al servicio y ejecutamos el metodo login, esperando que se resulva la siguiente promesa, despues la respuesta del authService la queremos capturar
-    const response = await authService.login(credentials);
+    const response = await authService.login(credentials)
 
     //este metodo puede ser satisfactorio o generar error
     try {
       //captura la respuesta, si se produce un error se ejcuta la captura el error del servcio y se retorna el error
     } catch (error) {
       //Retorna el error
-      throw error; //capturamos el error y seguimos difundiendo el error
+      throw error //capturamos el error y seguimos difundiendo el error
     }
   }
-});
+})
 ```
 
 2. La definicion final es:
@@ -1654,27 +1653,27 @@ export const useauthStore = defineStore("auth", () => {
 src/modules/auth/stores/authStore.js
 
 ```js
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia'
 
 //Llamamos al servicio definido
-import authService from "../services/authService";
+import authService from '../services/authService'
 
 //utilizamos la sintaxis de Composition API
-export const useauthStore = defineStore("auth", () => {
+export const useauthStore = defineStore('auth', () => {
   //Definimos mejor una constante token y sea la constante de recuperar el valor
-  const token = ref(localStorage.getItem("access_token") || null); //Si existe la variable que sea el valor al que se asigna al token
+  const token = ref(localStorage.getItem('access_token') || null) //Si existe la variable que sea el valor al que se asigna al token
 
   //Primero definimos un apropiedad computada, nos ineresa saber si tiene o no un token
   //const isAuthenticated = computed(() => (token.value ? true : false)) //Verificamos si lo que se recibe es un valor nullo, verificando el token, esto es lo msmo que lo de la siguiente linea
-  const isAuthenticated = computed(() => !!token.value); // si tenemos ago aca devuelve true en caso contrasrio retorna false
+  const isAuthenticated = computed(() => !!token.value) // si tenemos ago aca devuelve true en caso contrasrio retorna false
 
   //Definimos la funcion login pasandole las credenciales, la siguiente funcion tambien es una fucnio asincrona
   async function login(credentials) {
     //Acedemos al servicio y ejecutamos el metodo login, esperando que se resulva la siguiente promesa, despues la respuesta del authService la queremos capturar
-    const response = await authService.login(credentials);
+    const response = await authService.login(credentials)
 
     //Quiero almacenar en el local storage ese token, enviado por la api, como parametros la variable del tokem y con un segudo valor el valor que queremos almacenar
-    localStorage.setItem("access_token", response.access_token);
+    localStorage.setItem('access_token', response.access_token)
     //localStorage.setItem('access_token', response.data.access_token)
 
     //este metodo puede ser satisfactorio o generar error
@@ -1682,7 +1681,7 @@ export const useauthStore = defineStore("auth", () => {
       //captura la respuesta, si se produce un error se ejcuta la captura el error del servcio y se retorna el error
     } catch (error) {
       //Retorna el error
-      throw error; //capturamos el error y seguimos difundiendo el error
+      throw error //capturamos el error y seguimos difundiendo el error
     }
   }
 
@@ -1690,8 +1689,8 @@ export const useauthStore = defineStore("auth", () => {
   return {
     isAuthenticated, //saber si el usuario esta autenticado
     login, //metodo para loguear
-  };
-});
+  }
+})
 ```
 
 Paa wque despues veamos como utilizar esta tienda para realizar el rpoceso de login,
@@ -3475,4 +3474,133 @@ admin y logout
 
 Ahora si vemos como hacer el proceso de logout
 
-Para ello vamos a dirigirnos 3:18
+## Corrección del authService
+
+Para ello vamos a dirigirnos a aeuthSore
+src/modules/auth/stores/authStore.js
+
+Tambien abrimos el servicio authService
+
+src/modules/auth/services/authService.js
+
+Aqui se hacen las peticiones que se necesitaban hcia la api, pero se tiene un pequeño error.
+
+async function login(credentials) {
+try {
+// Accedemos al servicio y ejecutamos el método login
+// Esperamos la respuesta del authService
+const response = await authService.login(credentials)
+
+      // Actualizamos la referencia reactiva para que la UI se entere del cambio
+      token.value = response.access_token
+
+      // Almacenamos en el localStorage el token enviado por la API
+      localStorage.setItem('access_token', response.access_token)
+
+      //para el logaut tambien se borra el local storage y actualizamos el token, esto es para cambiar el estado autenticado, despues de hacer login
+      token.value = response.access_token
+
+      // Retornamos la respuesta para que el componente pueda usarla (ej. redireccionar)
+      return response
+    } catch (error) {
+      // Capturamos el error del servicio y lo seguimos difundiendo
+      console.error('Error detectado en el Store:', error)
+      throw error
+    }
+
+}
+
+En el try si se logra resolver la promesa, lo que quiero que se haga es que retornes esta respuesta, esta respuesta debe ser recibido en
+
+const response cuando la llamamos al service pero
+
+Si es que falla es decir en el catch
+
+La resolucion de la promesa es que se quiere que se produzca una excepción, y
+
+throw error.response.data
+Lo que se quiere que se haga es que se cree una excepcion y Mandes el error, si producimos una excepcion cuando sea llamado este service desde aqui, lo podemos capturar aca en el metodo catch() y esto
+
+throw error.response.data
+
+en authService.js
+
+Deberiamos replicarlo para todos los otros metodos no deberia estar retornado sino deberia estar produciendo una excepcion en el refresh excatamente igual y en el me, por que debe esar retornando la excepcion.
+
+Asi por ejemplo para el metodo logout
+
+async logout() {
+try {
+const response = await apiClient.post('/auth/logout') //no pasamos ninguna credencial
+
+      return response.data
+    } catch (error) {
+      return error.response.data
+    }
+
+},
+
+cambiamos de un return a un throw
+
+Por que como se habia mencionado, si nosotros simplemente retornamos el error, significa que todo el proceso se va arealizar netamente en el metodo try es decir nunca se va a aejecutar el metodo catch().
+
+eso se replica en los metodos logout(), refresh(), y me().
+
+Por que debe estar retornando unaexcepción, por que se habiamenciaonado que si nosotros solo reotrnamos el error, significa que todo el procesa se reaizara netamente, en el metodo try nunc aen el metodo catch()(
+
+Si retornatos con una excepción lo abligamos a que se ejecute el tor metodo catch(){
+
+}
+
+que al mismo tiempo seguiria difundiendo el error.
+
+Volvemos a producir una excepción.
+Esta es la corrección a ralizar en el los servicios de autenticación en el authService.
+
+Ahora si. se corrijio este pequeño detalle.
+
+## Logout
+
+Vamos a la tienda authStore y similar al metodo login, lo que queremos hacer es definir una funcion llamada logout asincrona y esta funcion se llamara logout.
+
+Esta funcion que hara agregamos una fucnio asincrona logout y dentro un try..catch
+
+que espera la respuesta de authService, ejecutando el metodo logout, esta hara la peticion correspondiente y esperamos a que se resuleva la promesa, entonces colocamos await
+
+await authService.logout()
+
+ahora si la promesa se logra resolver lo que queremos que ocurra es que elimine del local storage esa variable access_token que se habiamos generado anteriormente y aparte lo que queremos que ocurra es resetear el valor del token al valor del null y asi el valor de isAuthenticaded cambiaria tambien false con esto podrmeos cerrar la sesión.
+
+try {
+
+      await authService.logout()
+
+      localStorage.removeItem('access_token')
+
+      token.value = null
+
+    }
+
+Otra cosa es que si por algun motivo fallase el cierre de la swesión den AuthStorage, simplemnete seguimos transpitiendo el error.
+
+    catch (error) {
+
+      console.error('Error detectado en el Store:', error)
+
+      throw error
+    }
+
+Una vez terminado devolvemos en el return para poder ser utilizado desde nuestro componente
+
+return {
+token,
+isAuthenticated,
+login,
+logout,
+}
+
+En que componente se va a utilzar, justamente en el dropdown del usuario queremos que cuando hagamos click sobre el boton logout cerramos
+
+Entonces desde PublicNav, un avez que estamos aca vamos a decir que se mantenga a la escucha del evetno click y cada vez que hagamos click llamemos a la tienda authStore y ejecutar el metodo logout
+
+07.03

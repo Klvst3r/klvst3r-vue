@@ -25,7 +25,7 @@ export default {
 
       return response.data
     } catch (error) {
-      return error.response.data
+      throw error.response.data
     }
   },
   async refresh() {
@@ -34,7 +34,7 @@ export default {
 
       return response.data
     } catch (error) {
-      return error.response.data
+      throw error.response.data
     }
   },
   async me() {
@@ -44,7 +44,7 @@ export default {
 
       return response.data
     } catch (error) {
-      return error.response.data
+      throw error.response.data
     }
   },
 }
