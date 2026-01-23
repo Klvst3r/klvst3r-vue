@@ -204,21 +204,21 @@ vite.config.js
 y de la base siguiente:
 
 ```js
-import { fileURLToPath, URL } from 'node:url'
+import { fileURLToPath, URL } from "node:url";
 
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import vueDevTools from 'vite-plugin-vue-devtools'
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
+import vueDevTools from "vite-plugin-vue-devtools";
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue(), vueDevTools()],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
-})
+});
 ```
 
 importamos tailwindcss
@@ -818,6 +818,7 @@ php artisan migrate:fresh --seed
 
 12. Al no tener habilitados los paquetes de php specificos para SQLite, debemos ejecutar:
     php -v
+
     - si tenemos 8.2.x ejecutamos
       sudo apt update
       sudo apt install php8.2-sqlite3
@@ -901,47 +902,47 @@ const axios = require('axios').default;
 Ejemplo:
 
 ```js
-const axios = require('axios')
+const axios = require("axios");
 
 // Make a request for a user with a given ID
 axios
-  .get('/user?ID=12345')
+  .get("/user?ID=12345")
   .then(function (response) {
     // handle success
-    console.log(response)
+    console.log(response);
   })
   .catch(function (error) {
     // handle error
-    console.log(error)
+    console.log(error);
   })
   .finally(function () {
     // always executed
-  })
+  });
 
 // Optionally the request above could also be done as
 axios
-  .get('/user', {
+  .get("/user", {
     params: {
       ID: 12345,
     },
   })
   .then(function (response) {
-    console.log(response)
+    console.log(response);
   })
   .catch(function (error) {
-    console.log(error)
+    console.log(error);
   })
   .finally(function () {
     // always executed
-  })
+  });
 
 // Want to use async/await? Add the `async` keyword to your outer function/method.
 async function getUser() {
   try {
-    const response = await axios.get('/user?ID=12345')
-    console.log(response)
+    const response = await axios.get("/user?ID=12345");
+    console.log(response);
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
 }
 ```
@@ -1024,15 +1025,15 @@ Al final vamos a exportarlo el api client, para cuando quieramos hacer una petic
 configuracion final de axios
 
 ```js
-import axios from 'axios'
+import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: 'https://localhost:8000/api',
+  baseURL: "https://localhost:8000/api",
   headers: {
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
+    "Content-Type": "application/json",
+    Accept: "application/json",
   },
-})
+});
 ```
 
 ## Autenticacion
@@ -1624,28 +1625,28 @@ src/modules/auth/stores/authStore.js
 1. Definimos la tienda
 
 ```js
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
 
 //Llamamos al servicio definido
 
-import authService from '../services/authService'
+import authService from "../services/authService";
 
 //utilizamos la sintaxis de Composition API
-export const useauthStore = defineStore('auth', () => {
+export const useauthStore = defineStore("auth", () => {
   //Definimos la funcion login pasandole las credenciales, la siguiente funcion tambien es una fucnio asincrona
   async function login(credentials) {
     //Acedemos al servicio y ejecutamos el metodo login, esperando que se resulva la siguiente promesa, despues la respuesta del authService la queremos capturar
-    const response = await authService.login(credentials)
+    const response = await authService.login(credentials);
 
     //este metodo puede ser satisfactorio o generar error
     try {
       //captura la respuesta, si se produce un error se ejcuta la captura el error del servcio y se retorna el error
     } catch (error) {
       //Retorna el error
-      throw error //capturamos el error y seguimos difundiendo el error
+      throw error; //capturamos el error y seguimos difundiendo el error
     }
   }
-})
+});
 ```
 
 2. La definicion final es:
@@ -1653,27 +1654,27 @@ export const useauthStore = defineStore('auth', () => {
 src/modules/auth/stores/authStore.js
 
 ```js
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
 
 //Llamamos al servicio definido
-import authService from '../services/authService'
+import authService from "../services/authService";
 
 //utilizamos la sintaxis de Composition API
-export const useauthStore = defineStore('auth', () => {
+export const useauthStore = defineStore("auth", () => {
   //Definimos mejor una constante token y sea la constante de recuperar el valor
-  const token = ref(localStorage.getItem('access_token') || null) //Si existe la variable que sea el valor al que se asigna al token
+  const token = ref(localStorage.getItem("access_token") || null); //Si existe la variable que sea el valor al que se asigna al token
 
   //Primero definimos un apropiedad computada, nos ineresa saber si tiene o no un token
   //const isAuthenticated = computed(() => (token.value ? true : false)) //Verificamos si lo que se recibe es un valor nullo, verificando el token, esto es lo msmo que lo de la siguiente linea
-  const isAuthenticated = computed(() => !!token.value) // si tenemos ago aca devuelve true en caso contrasrio retorna false
+  const isAuthenticated = computed(() => !!token.value); // si tenemos ago aca devuelve true en caso contrasrio retorna false
 
   //Definimos la funcion login pasandole las credenciales, la siguiente funcion tambien es una fucnio asincrona
   async function login(credentials) {
     //Acedemos al servicio y ejecutamos el metodo login, esperando que se resulva la siguiente promesa, despues la respuesta del authService la queremos capturar
-    const response = await authService.login(credentials)
+    const response = await authService.login(credentials);
 
     //Quiero almacenar en el local storage ese token, enviado por la api, como parametros la variable del tokem y con un segudo valor el valor que queremos almacenar
-    localStorage.setItem('access_token', response.access_token)
+    localStorage.setItem("access_token", response.access_token);
     //localStorage.setItem('access_token', response.data.access_token)
 
     //este metodo puede ser satisfactorio o generar error
@@ -1681,7 +1682,7 @@ export const useauthStore = defineStore('auth', () => {
       //captura la respuesta, si se produce un error se ejcuta la captura el error del servcio y se retorna el error
     } catch (error) {
       //Retorna el error
-      throw error //capturamos el error y seguimos difundiendo el error
+      throw error; //capturamos el error y seguimos difundiendo el error
     }
   }
 
@@ -1689,8 +1690,8 @@ export const useauthStore = defineStore('auth', () => {
   return {
     isAuthenticated, //saber si el usuario esta autenticado
     login, //metodo para loguear
-  }
-})
+  };
+});
 ```
 
 Paa wque despues veamos como utilizar esta tienda para realizar el rpoceso de login,
@@ -2050,3 +2051,1202 @@ cambiando a
 <span class="font-medium"> ¡'Ups' Ha ocurrido un error! </span>
 
 Lo que sigue es que queremos evitar un usuario ingrese a esta seccion cuando ya previamente ya haya iniciado sesión.
+
+## Guard
+
+Al definior las rutas podemos tambien definir metadata, que es información que luego podemos recupearar al ingresar con el router.
+
+entonces en src/router/index.js
+
+Creamos un anueva carpeta en la carpeta de rutas /guards
+src/router/guards/authGuard.js
+
+Este archivos traera la tienda que contiene la informacióin acerca de si el usuario se encuentra autenticado o no la tienda es:
+
+src/modules/auth/stores/authStore.js
+
+Que se llama authStores.js
+
+con la información de
+
+isAuthenticated
+
+entonces ahora si podemos importar diche tienda
+
+Para crear un guard es definir una funcion y se exportara
+
+Asignamos un afuencion flecha a la variable authGuard con tres parametros
+
+export default authGuard = (to, from, next) => {
+
+}
+
+Los guards son como una especie de interceptores y se ejecutan cada vez que queremos acceder a una determinada ruta
+
+Si accedo a la ruta home lo que ocurre es que se ejecute el guard asociado a esta ruta, si ingreso a la ruta login si es que hay un interceptor, lo primero antes de mostrar cualquier información es que se va a ejecutar este guard.
+
+Dentro de la variable to va a estar la ifnoramciṕn acerca de la ruta a la cual estamos tratando de acceder
+
+Si accedemos a login dentro de to va a quedar la información acerca de login, si accedo a home dentro de to queda la infrmaciṕon de home.
+
+Lo que vamos a hacer es que ya importada la tienda inicializamos la tienda
+
+Inicializamaos la tienda y despues con un condicional
+
+si dentro de la ruta que estamos tratando de aceder en este momento hemos pasado alguna metadata
+
+El guard se crea asi:
+
+import { useAuthStore } from "@/modules/auth/stores/authStore";
+
+export default authGuard = (to, from, next) => {
+const authStore = useAuthStore();
+
+    if (to.meta.requiresAuth && authStore.isAuthenticated) { // si dentro de la ruta que estamos tratando de acceder hemos pasado alguna metadata, y si esa meta esta autenticada lo que se hace es redirigir a la ruta de login para su autenticacion es igual a requiresAuth para ello next
+        next({ name: 'login'}); //Pedimos que nos redireccione hacia el login.
+    } else if(to.meta.requiresGuest && !authStore.isAuthenticated) {  //Preguntamos si hay un campo llamadao requiresGuest, significa que el usuario no debe estar autenticado, debemos rechazar su peticion, redirigir hacia home
+        next({ name: 'home' });
+    }else{ //Si no es ni uno ni otro que me deje continuar
+        next() //hacemos en continuar sigue tu camino
+    }
+
+}
+
+Este guard no esta funcionando aun, para funcionar lo que tenemos que hacer asignaeselo a las rutas. Hay dos formas,
+
+Una es asignarla de manera manual, dirigirnos a cada una de ellas, empezar a asignarselo .
+
+La otra es asignarlo de manera global, en este caso lo haremos asi, queremos que afecte todas las rutas.
+
+Si queremos que esto fucnioine, tenemos que agregarle la metadata de la ruta.
+
+Por ejemplo en el archivo de ruta proncipal hay un metodo que no se le ha agregado ninguna metadata
+
+src/router/guards/authGuard.js
+
+{
+path: '/',
+component: () => import('@/layouts/public/PublicLayout.vue'),
+children: publicRoutes,
+},
+
+No le va a afectar pero a la ruta /path deberia afectar,
+
+Para agrgarlo de manera global lo hacemos de la siguiente manera.
+
+nos dirigimos a
+
+src/router/index.js
+
+considerando que todo en el archivo se trata de una constante llamada router
+
+const router = createRouter({
+
+debajo de la inicialización vamos allamar al roiyer y vamos allamar al siguiente metodo beforeEach()
+
+router.beforeEach(authGuard);
+
+Si importa con:
+
+import authGuard from './guards/authGuard'
+
+Aunque se suguie el procedimiento al ir a la ruta:
+
+http://localhost:5173/auth/login
+
+lleva al login lo que indica que no se esta trabajando correctamente el guarda aca la asistencia:
+
+Instancie en otro equipo mi proyecto de vue, el cual trabaja con axios, pero ahora me marca error algo me falta por configurar:
+
+ya instale axios al proyecto
+
+prepare.js:1 🍍 "auth" store installed 🆕
+
+authStore.js:34 Error detectado en el Store: {message: 'Error de conexión con el servidor'}
+
+login @ authStore.js:34
+
+await in login
+
+wrappedAction @ pinia.js?v=8d3c0960:5507
+
+store.<computed> @ pinia.js?v=8d3c0960:5204
+
+handleLogin @ LoginView.vue:46
+
+(anonymous) @ chunk-2MKFL3BX.js?v=dfea571e:12443
+
+callWithErrorHandling @ chunk-2MKFL3BX.js?v=dfea571e:2342
+
+callWithAsyncErrorHandling @ chunk-2MKFL3BX.js?v=dfea571e:2349
+
+invoker @ chunk-2MKFL3BX.js?v=dfea571e:11425
+
+authService.js:10 POST http://localhost:8000/api/auth/login net::ERR_CONNECTION_REFUSED
+
+dispatchXhrRequest @ axios.js?v=f2c9fd4f:1696
+
+xhr @ axios.js?v=f2c9fd4f:1573
+
+dispatchRequest @ axios.js?v=f2c9fd4f:2107
+
+\_request @ axios.js?v=f2c9fd4f:2327
+
+request @ axios.js?v=f2c9fd4f:2219
+
+httpMethod @ axios.js?v=f2c9fd4f:2356
+
+wrap @ axios.js?v=f2c9fd4f:8
+
+login @ authService.js:10
+
+login @ authStore.js:22
+
+wrappedAction @ pinia.js?v=8d3c0960:5507
+
+store.<computed> @ pinia.js?v=8d3c0960:5204
+
+handleLogin @ LoginView.vue:46
+
+(anonymous) @ chunk-2MKFL3BX.js?v=dfea571e:12443
+
+callWithErrorHandling @ chunk-2MKFL3BX.js?v=dfea571e:2342
+
+callWithAsyncErrorHandling @ chunk-2MKFL3BX.js?v=dfea571e:2349
+
+invoker @ chunk-2MKFL3BX.js?v=dfea571e:11425
+
+El error net::ERR_CONNECTION_REFUSED indica que tu aplicación Vue está intentando comunicarse con el backend, pero no hay nada escuchando en la dirección especificada o la conexión está siendo bloqueada.
+
+Al cambiar de equipo, es muy común que falten configurar las variables de entorno o levantar los servicios del backend. Aquí tienes los pasos para solucionarlo:
+
+1. Verifica que el Backend esté corriendo
+   El error dice que buscas el API en http://localhost:8000. Asegúrate de que tu servidor de Laravel (o el backend que uses) esté activo en ese puerto:
+
+Abre una terminal en la carpeta de tu proyecto backend y ejecuta:
+
+Bash
+php artisan serve
+(O el comando correspondiente si usas Docker/Sail).
+
+Prueba rápida: Abre http://localhost:8000 en tu navegador. Si no carga nada, el problema es el servidor backend.
+
+2. Configura las Variables de Entorno (.env)
+   Es probable que al clonar el proyecto en el nuevo equipo no hayas creado el archivo .env en la carpeta de Vue.
+
+Copia el archivo de ejemplo: cp .env.example .env
+
+Revisa que la variable VITE_API_URL (o como la hayas nombrado en Axios) coincida con la URL de tu backend:
+
+Code snippet
+VITE_API_BASE_URL=http://localhost:8000/api
+Importante: Después de modificar el .env, debes detener el comando npm run dev y volverlo a ejecutar para que Vue reconozca los cambios.
+
+3. Configuración de CORS en el Backend
+   Si el backend ya está corriendo, puede que esté rechazando la conexión por seguridad. En Laravel, asegúrate de que el archivo config/cors.php permita las peticiones desde el puerto donde corre Vue (usualmente http://localhost:5173).
+
+4. Revisa la IP (Si usas un entorno virtualizado)
+   Si estás usando Docker, Sail, o intentas ver el proyecto desde otro dispositivo en la misma red:
+
+localhost no funcionará igual. Deberás usar la IP de tu máquina (ej. 192.168.1.15).
+
+En el backend, corre el servidor permitiendo conexiones externas: php artisan serve --host=0.0.0.0.
+
+5. Configuración de Axios
+   Asegúrate de que en tu archivo de configuración de Axios (donde creas la instancia), estés usando la variable de entorno correctamente:
+
+JavaScript
+// src/services/axios.js
+import axios from 'axios';
+
+const api = axios.create({
+baseURL: import.meta.env.VITE_API_BASE_URL,
+});
+
+export default api;
+Resumen de comprobación:
+
+¿Está encendido el backend?
+
+¿El puerto es el 8000?
+
+¿Existe el archivo .env en el proyecto Vue con la URL correcta?
+
+¿Lograste levantar el servidor de Laravel o te lanza algún error al intentar ejecutar php artisan serve?
+
+bien ya levante el servidor backend pero como verifico si mi usuario corrio con los seeder adecuados, el seeder del back es:
+
+\*/
+
+public function run(): void
+
+{
+
+// User::factory(10)->create();
+
+// Usuario de ejemplo previo
+
+User::factory()->create([
+
+'name' => 'Victor Arana',
+
+'email' => 'victor@codersfree.com',
+
+'password' => bcrypt('12345678'),
+
+]);
+
+//Nuestro usuario personalizado
+
+User::factory()->create([
+
+'name' => 'Klvst3r',
+
+'email' => 'klvst3r@gmail.com',
+
+'password' => bcrypt('desarrollo'),
+
+]);
+
+}
+
+Para verificar si los usuarios se crearon correctamente en tu base de datos y que el login en Vue funcione con las credenciales que definiste, tienes tres métodos principales:
+
+1. Consultar la Base de Datos (Vía Terminal)
+   Dado que prefieres Debian para desarrollar, la forma más rápida es usar Tinker, que es una consola interactiva de Laravel que te permite interactuar con la base de datos directamente.
+
+En la carpeta de tu backend, ejecuta:
+
+Bash
+php artisan tinker
+Una vez dentro, busca los usuarios con este comando:
+
+PHP
+User::all();
+Esto te mostrará una lista (JSON-like) de todos los usuarios. Deberías ver a "Victor Arana" y a "Klvst3r".
+
+Para salir de Tinker, escribe exit.
+
+2. Ejecutar los Seeders (Si no aparecen)
+   Si al hacer el paso anterior la lista sale vacía, es porque instalaste el proyecto pero no has ejecutado las migraciones y los seeders en este nuevo equipo. Ejecuta lo siguiente:
+
+Bash
+
+# Borra las tablas, crea las nuevas y ejecuta los seeders
+
+php artisan migrate:fresh --seed
+Nota: El comando migrate:fresh borrará cualquier dato previo. Si solo quieres ejecutar el seeder sin borrar nada, usa: php artisan db:seed.
+
+3. Verificar con una herramienta visual
+   Como estás trabajando con SQLite (según mencionaste anteriormente) o MariaDB/MySQL, puedes usar herramientas que te permitan ver las tablas gráficamente:
+
+VS Code: Instala la extensión "SQLite Viewer" o "Database Client". Solo tienes que abrir el archivo database/database.sqlite y podrás ver la tabla users con tus registros.
+
+DBeaver: Es una excelente opción gratuita para Debian que soporta casi cualquier base de datos.
+
+¿Cómo probar el Login ahora?
+Ahora que confirmaste que el usuario existe, intenta loguearte en tu interfaz de Vue con:
+
+Email: klvst3r@gmail.com
+
+Password: desarrollo
+
+Si el error net::ERR_CONNECTION_REFUSED persiste a pesar de que el servidor está corriendo (php artisan serve), revisa si el puerto en el que levantó el backend es realmente el 8000, ya que a veces si ese puerto está ocupado, Laravel sube automáticamente al 8001.
+
+¿Qué resultado te dio el comando User::all(); en Tinker?
+
+⚡klvst3r ❯❯ php artisan tinker
+
+Psy Shell v0.12.8 (PHP 8.2.30 — cli) by Justin Hileman
+
+> User::all();
+
+[!] Aliasing 'User' to 'App\Models\User' for this Tinker session.
+
+= Illuminate\Database\Eloquent\Collection {#1342
+
+all: [],
+
+}
+
+>
+
+Tal como sospechábamos, el resultado all: [] confirma que tu base de datos está vacía en este equipo. Aunque el código del seeder existe, aún no se ha ejecutado contra la base de datos actual.
+
+Para solucionar esto y poder iniciar sesión en tu proyecto Vue, sigue estos pasos en la terminal de tu backend:
+
+1. Poblar la base de datos
+   Ejecuta el siguiente comando para correr las migraciones pendientes y ejecutar los seeders:
+
+Bash
+php artisan db:seed
+Si por alguna razón las tablas ni siquiera están creadas, usa el comando completo que reconstruye todo:
+
+Bash
+php artisan migrate:fresh --seed 2. Verificar nuevamente
+Entra otra vez a Tinker para estar 100% seguro:
+
+Bash
+php artisan tinker
+
+> User::count();
+> Si el resultado es 2, ya tienes los usuarios listos para el login.
+
+¿Por qué falló la conexión anteriormente?
+Además de la base de datos vacía, el error ERR_CONNECTION_REFUSED que mostraste al principio suele ocurrir por dos detalles técnicos al cambiar de equipo:
+
+El Host en el .env de Vue: Asegúrate de que tu archivo .env en la carpeta de Vue no tenga espacios y apunte exactamente a donde corre Laravel.
+
+CORS: Al ser un equipo nuevo, verifica que en config/cors.php (en Laravel) tengas configurado esto para permitir que tu frontend se comunique:
+
+PHP
+'paths' => ['api/*', 'sanctum/csrf-cookie'],
+'allowed_origins' => ['http://localhost:5173'], // El puerto de Vue
+Proceso de Login
+Una vez que User::count() te devuelva datos, intenta entrar desde tu aplicación Vue con:
+
+User: klvst3r@gmail.com
+
+Pass: desarrollo
+
+¿Te sigue apareciendo el error de "Error de conexión con el servidor" en la consola de Vue o ya lograste pasar al dashboard?
+
+src/modules/auth/stores/authStore.js
+
+retorna si el usario esta autenticado
+
+const isAuthenticated = computed(() => !!token.value)
+
+Tengo definida un Guard para verificar si el usuario esta autenticado:
+
+src/router/guards/authGuard.js
+
+import { useAuthStore } from "@/modules/auth/stores/authStore";
+
+export const authGuard = (to, from, next) => {
+
+const authStore = useAuthStore();
+
+if (to.meta.requiresAuth && authStore.isAuthenticated) { // si dentro de la ruta que estamos tratando de acceder hemos pasado alguna metadata, y si esa meta esta autenticada lo que se hace es redirigir a la ruta de login para su autenticacion es igual a requiresAuth para ello next
+
+next({ name: 'login'}); //Pedimos que nos redireccione hacia el login.
+
+} else if(to.meta.requiresGuest && !authStore.isAuthenticated) { //Preguntamos si hay un campo llamadao requiresGuest, significa que el usuario no debe estar autenticado, debemos rechazar su peticion, redirigir hacia home
+
+next({ name: 'home' });
+
+}else{ //Si no es ni uno ni otro que me deje continuar
+
+next() //hacemos en continuar sigue tu camino
+
+}
+
+}
+
+src/modules/auth/router/index.js
+
+// Defniremos aca las rutas de administración
+
+const routes = [
+
+{
+
+path: '',
+
+redirect: { name: 'auth-login' },
+
+},
+
+{
+
+path: 'login',
+
+name: 'auth-login',
+
+component: () => import('@/modules/auth/views/LoginView.vue'),
+
+},
+
+{
+
+path: 'register',
+
+name: 'auth-register',
+
+component: () => import('@/modules/auth/views/RegisterView.vue'),
+
+},
+
+]
+
+//exportamos el contenido de estas rutas hacia el router pricipal
+
+export default routes
+
+//Despues hay que importarlo en el arhivo de rutas pricipal
+
+pero tengo el siguiente error:
+
+Uncaught SyntaxError: The requested module '/src/router/guards/authGuard.js' does not provide an export named 'authGuard' (at index.js:6:10)
+
+El error Uncaught SyntaxError ocurre porque hay una discrepancia entre cómo estás exportando la función en authGuard.js y cómo la estás importando en tu router principal.
+
+A pesar de que el código parece tener un export const authGuard, este error suele darse por dos razones comunes en entornos Vite/Vue:
+
+1. Revisa la Importación en el Router Principal
+   Busca el archivo donde importas el guard (probablemente src/router/index.js). El error indica que estás intentando importar un named export que el navegador no encuentra.
+
+Asegúrate de que la importación tenga llaves { }:
+
+JavaScript
+// ✅ Forma correcta (con llaves)
+import { authGuard } from '@/router/guards/authGuard';
+
+// ❌ Esto causaría el error si authGuard no es el 'default'
+import authGuard from '@/router/guards/authGuard'; 2. Exportación por Defecto vs. Nombrada
+Si prefieres importar sin las llaves, debes cambiar la exportación en src/router/guards/authGuard.js:
+
+JavaScript
+// Opción A: Mantener export nombrado (Requiere { authGuard } al importar)
+export const authGuard = (to, from, next) => { ... }
+
+// Opción B: Cambiar a export default (Permite importar sin llaves)
+const authGuard = (to, from, next) => { ... }
+export default authGuard;
+Un detalle importante en tu lógica del Guard
+He notado un pequeño error en la lógica de tu authGuard que te causará un bucle infinito de redirecciones una vez que soluciones el error de sintaxis:
+
+En esta línea: if (to.meta.requiresAuth && authStore.isAuthenticated)
+
+Dices en el comentario que si requiere autenticación y está autenticado, lo mandas al login. Debería ser al revés: si requiere autenticación y NO está autenticado (!authStore.isAuthenticated), entonces lo mandas al login.
+
+Lógica corregida:
+
+JavaScript
+export const authGuard = (to, from, next) => {
+const authStore = useAuthStore();
+
+    // Si la ruta requiere auth y el usuario NO está autenticado
+    if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+        next({ name: 'auth-login' }); // Usa el nombre exacto de tu ruta
+    }
+    // Si la ruta es para invitados (login/reg) y el usuario YA está autenticado
+    else if (to.meta.requiresGuest && authStore.isAuthenticated) {
+        next({ name: 'home' });
+    }
+    else {
+        next();
+    }
+
+}
+Siguiente paso recomendado:
+Revisa tu archivo src/router/index.js (el principal) y verifica que el nombre de la ruta hacia la que rediriges coincida con el que definiste en el módulo. En tu código de rutas usaste name: 'auth-login', pero en el guard pusiste name: 'login'. Deben ser idénticos.
+
+¿Podrías mostrarme cómo estás importando el authGuard en tu archivo de rutas principal?
+
+en src/router/guards/authGuard.js
+
+Tengo:
+
+import { useAuthStore } from "@/modules/auth/stores/authStore";
+
+export const authGuard = (to, from, next) => {
+
+const authStore = useAuthStore();
+
+// Si la ruta requiere auth y el usuario NO está autenticado
+
+if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+
+next({ name: 'auth-login' }); // Usa el nombre exacto de tu ruta
+
+}
+
+// Si la ruta es para invitados (login/reg) y el usuario YA está autenticado
+
+else if (to.meta.requiresGuest && authStore.isAuthenticated) {
+
+next({ name: 'home' });
+
+}else{ //Si no es ni uno ni otro que me deje continuar
+
+next() //hacemos en continuar sigue tu camino
+
+}
+
+}
+
+aca se recupera
+
+import { createRouter, createWebHistory } from 'vue-router'
+
+import publicRoutes from '@/modules/public/router/index'
+
+import authRoutes from '@/modules/auth/router/index'
+
+import adminRoutes from '@/modules/admin/dashboard/router/index.js'
+
+import { authGuard } from '@/router/guards/authGuard';
+
+const router = createRouter({
+
+history: createWebHistory(import.meta.env.BASE_URL),
+
+routes: [
+
+{
+
+path: '/',
+
+component: () => import('@/layouts/public/PublicLayout.vue'),
+
+children: publicRoutes,
+
+},
+
+{
+
+path: '/auth',
+
+meta: {
+
+requireGuest: true //con estas rutas podemos ingresar si no estamos autenticasdos
+
+},
+
+component: () => import('@/layouts/auth/AuthLayout.vue'),
+
+children: authRoutes,
+
+},
+
+{
+
+path: '/admin',
+
+meta: {
+
+requiresAuth: true //con esto para ingresar a este grupo de rutas se requiere autenticación
+
+},
+
+component: () => import('@/layouts/admin/AdminLayout.vue'),
+
+// Al entrar a /admin, redirige automáticamente a la ruta hija con ese nombre
+
+redirect: { name: 'admin.dashboard' },
+
+children: [...adminRoutes],
+
+},
+
+],
+
+})
+
+// Agregamos el guard de manera global
+
+router.beforeEach(authGuard); //despues de importarse se usa
+
+export default router
+
+y simplemente despues se usa:
+
+router.beforeEach(authGuard);
+
+El problema esta resuelto pero si tratamos de ingresar a
+
+localhost:5173/auth/login
+
+simplemente no dejara
+
+si lo hacemos de manera manual
+
+http://localhost:5173/auth/login
+
+de igual manera debe retornar hacia http://localhost:5173/
+
+para cumplir con lo que se necesita
+
+Qué bueno que ya resolviste el error de importación. El problema de que no te permite entrar a /auth/login y te redirige al inicio se debe a una falta de coincidencia (typo) entre el nombre de la propiedad en la ruta y cómo la evalúas en el Guard.
+
+Aquí tienes los dos ajustes necesarios para que funcione correctamente:
+
+1. Corrige el nombre en las Rutas (requireGuest vs requiresGuest)
+   En tu archivo de rutas principal, definiste la propiedad como requireGuest (sin la s), pero en tu authGuard.js estás preguntando por requiresGuest.
+
+En src/router/index.js cámbialo a:
+
+JavaScript
+{
+path: '/auth',
+meta: {
+requiresGuest: true // <-- Agregamos la 's' para que coincida con el guard
+},
+component: () => import('@/layouts/auth/AuthLayout.vue'),
+children: authRoutes,
+}, 2. Ajusta el nombre de la ruta de redirección
+En tu Guard, tienes puesto que si el usuario ya está autenticado e intenta entrar a login, lo mande a home. Asegúrate de que en tus publicRoutes exista una ruta con ese nombre exacto.
+
+En src/router/guards/authGuard.js:
+
+JavaScript
+// ... dentro del else if
+else if (to.meta.requiresGuest && authStore.isAuthenticated) {  
+ // Asegúrate de que 'home' sea el nombre correcto en tus publicRoutes
+next({ name: 'home' });
+}
+¿Cómo funciona el flujo ahora?
+Para que el sistema de protección sea robusto, la lógica debe operar así:
+
+Estado Usuario Intenta entrar a... Meta en la Ruta Resultado esperado
+No Logueado /admin requiresAuth: true Redirige a auth-login
+No Logueado /auth/login requiresGuest: true Permite entrada (next)
+Logueado /auth/login requiresGuest: true Redirige a home
+Cualquiera / Ninguna Permite entrada (next)
+Un detalle técnico extra
+En Vue Router, cuando usas rutas anidadas (children), el to.meta combina los objetos de la ruta padre y la hija. Al poner requiresGuest: true en el padre (/auth), automáticamente todas las rutas hijas como /auth/login y /auth/register heredan esa propiedad. Esto es correcto y eficiente.
+
+¿Qué pasa si intentas entrar ahora? Si después de corregir el nombre a requiresGuest te sigue redirigiendo al inicio sin dejarte ver el login, verifica en la consola si authStore.isAuthenticated no está devolviendo true por error (quizás un token viejo guardado en el localStorage de tu navegador de pruebas anteriores).
+
+¿Quieres que revisemos cómo está definida la ruta home en tus publicRoutes para asegurar que el nombre coincida?
+
+Si yo lo escribo de manera manual
+
+http://localhost:5173/auth/login
+
+me debne redirigir a http://localhost:5173/
+
+Para que al escribir manualmente la URL del login te redirija al inicio (http://localhost:5173/), el Guard debe detectar que ya hay una sesión activa.
+
+Si actualmente escribes la URL y no te redirige, o te permite ver el formulario de login estando ya autenticado, el problema es que el Guard no está detectando el estado real del authStore en ese momento preciso.
+
+Aquí tienes los puntos clave para asegurar esa redirección manual:
+
+1. Asegura la coincidencia de nombres
+   Como notamos antes, tienes un pequeño desfase de nombres. Para que el Guard identifique que el login es solo para invitados, el nombre en el router/index.js debe ser idéntico al del Guard.
+
+En tu Router:
+
+JavaScript
+{
+path: '/auth',
+meta: {
+requiresGuest: true // Asegúrate que termine en 's'
+},
+// ...
+} 2. Verifica el estado del Token
+El Guard depende de authStore.isAuthenticated. Si escribes la URL manualmente y no te redirige, es porque token.value está vacío en ese instante.
+
+Asegúrate de que en tu authStore.js estés recuperando el token del localStorage (u otra persistencia) al inicializarse, de lo contrario, al recargar la página o escribir la URL manualmente, el estado de Pinia se reinicia a "no autenticado".
+
+Ejemplo en tu authStore.js:
+
+JavaScript
+const token = ref(localStorage.getItem('token') || null);
+const isAuthenticated = computed(() => !!token.value); 3. El flujo del Guard (Explicación)
+Cuando escribes http://localhost:5173/auth/login manualmente:
+
+El navegador carga la app de Vue.
+
+El router.beforeEach se ejecuta antes de mostrar la vista.
+
+El Guard revisa: to.meta.requiresGuest (que es true).
+
+El Guard revisa: authStore.isAuthenticated.
+
+Si es True: Se ejecuta next({ name: 'home' }) y el usuario nunca ve el login, es enviado inmediatamente a la raíz /.
+
+4. Prueba de Depuración
+   Si quieres ver exactamente qué está pasando cuando escribes la URL manual, agrega un console.log temporal en tu Guard:
+
+JavaScript
+export const authGuard = (to, from, next) => {
+const authStore = useAuthStore();
+
+    console.log('¿Hacia dónde va?:', to.path);
+    console.log('¿Requiere invitado?:', to.meta.requiresGuest);
+    console.log('¿Está autenticado?:', authStore.isAuthenticated);
+
+    if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+        next({ name: 'auth-login' });
+    } else if (to.meta.requiresGuest && authStore.isAuthenticated) {
+        console.log('Redirigiendo a home por sesión activa...');
+        next({ name: 'home' }); // <--- Esta es la línea que cumple tu requerimiento
+    } else {
+        next();
+    }
+
+}
+Sugerencia: Si el usuario ya está logueado y tratas de forzar el login, la redirección a home es la mejor práctica. Solo asegúrate de que en tu archivo src/modules/public/router/index.js la ruta principal tenga efectivamente el nombre name: 'home'.
+
+¿Te gustaría que revisemos cómo estás guardando el token en el Store para asegurar que no se pierda al actualizar la página?
+
+en src/modules/public/router/index.js
+
+Tengo:
+
+// importamos el archivo de rutas de cada submodulo
+
+import aboutRoutes from '@/modules/public/about/router/index.js'
+
+import blogRoutes from '@/modules/public/blog/router/index.js'
+
+import contactRoutes from '@/modules/public/contact/router/index.js'
+
+import homeRoutes from '@/modules/public/home/router/index.js'
+
+// Una forma de combinar las rutas de los submodulos e
+
+//const routes = aboutRoutes;
+
+// Defniremos aca las rutas de administración
+
+const routes = [
+
+// {
+
+// path: '/',
+
+// name: 'home',
+
+// component: () => import('@/modules/public/views/HomeView.vue'),
+
+// },
+
+// Rutas del submodulo about
+
+//Descrutruacion de las rutas importadas
+
+// Se esta especificando es que en esta parte se van a agregar los elementos de este array, es decir no va a importar el array sino solo los elementos que contiene
+
+...aboutRoutes,
+
+...blogRoutes,
+
+...contactRoutes,
+
+...homeRoutes,
+
+]
+
+//exportamos el contenido de estas rutas hacia el router pricipal
+
+//export default routes
+
+export default routes
+
+//Despues hay que importarlo en el arhivo de rutas pricipal
+
+parece que no esta home o esta comentado, no se si deba ir asi o falt algo en este archivo
+
+Efectivamente, el problema de por qué no te redirige a home es que la ruta con ese nombre específico no está activa o no existe dentro de los arreglos que estás combinando.
+
+Para que next({ name: 'home' }) funcione, el router debe encontrar una ruta que tenga exactamente name: 'home'.
+
+1. Revisa homeRoutes
+   Dado que estás usando desestructuración (...homeRoutes), lo más probable es que el nombre "home" deba estar dentro de src/modules/public/home/router/index.js.
+
+Abre ese archivo y asegúrate de que tenga esta estructura:
+
+JavaScript
+// src/modules/public/home/router/index.js
+export default [
+{
+path: '', // Esto hace que sea la ruta raíz del módulo
+name: 'home', // <--- ESTE ES EL NOMBRE QUE BUSCA EL GUARD
+component: () => import('@/modules/public/home/views/HomeView.vue')
+}
+] 2. El conflicto en public/router/index.js
+En el código que mostraste, tienes comentada la ruta manual:
+
+JavaScript
+// {
+// path: '/',
+// name: 'home',
+// component: () => import('@/modules/public/views/HomeView.vue'),
+// },
+Si homeRoutes (el archivo que importas) no tiene una ruta con el nombre home, el Guard fallará porque intentará redirigir a un destino inexistente.
+
+3. Solución recomendada
+   Para mantener el orden que llevas, asegúrate de que el archivo principal de rutas públicas se vea así:
+
+JavaScript
+const routes = [
+// No necesitas la ruta comentada si ya viene dentro de ...homeRoutes
+...homeRoutes,
+...aboutRoutes,
+...blogRoutes,
+...contactRoutes,
+]
+
+export default routes 4. ¿Por qué es importante para la redirección manual?
+Cuando escribes en el navegador http://localhost:5173/auth/login, el flujo es este:
+
+Carga del Guard: El Guard detecta que ya estás autenticado (porque el token existe en el Store).
+
+Redirección: El Guard ejecuta next({ name: 'home' }).
+
+Búsqueda: El Router busca en todo su árbol de rutas quién se llama "home".
+
+Fallo/Éxito: \* Si no existe: Vue Router lanzará un error en consola diciendo que la ruta "home" no existe.
+
+Si existe: Te mandará a la URL vinculada a ese nombre (que suele ser /).
+
+Verificación final
+Para confirmar que todo está vinculado correctamente, revisa estos tres puntos:
+
+En el Guard: Que use next({ name: 'home' }).
+
+En el Router Principal: Que la ruta de auth tenga meta: { requiresGuest: true } (con la s).
+
+En homeRoutes: Que la ruta principal tenga name: 'home'.
+
+¿Qué pasa si cambias el nombre en el Guard a uno que sí estés seguro que existe? Por ejemplo, si tienes una ruta llamada dashboard, intenta next({ name: 'admin.dashboard' }) solo para probar si la redirección manual funciona.
+
+¿Quieres que revisemos el contenido de src/modules/public/home/router/index.js para ver cómo está nombrada la ruta ahí?
+
+en mi archivo
+
+src/modules/public/home/router/index.js
+
+tengo:
+
+const routes = [
+
+//Definimos nuestra primera ruta
+
+{
+
+path: '',
+
+name: 'home',
+
+component: () => import('@/modules/public/home/views/HomeView.vue'),
+
+},
+
+]
+
+export default routes
+
+¡Perfecto! El archivo home/router/index.js está correcto. Tiene el name: 'home' que el Guard necesita para hacer la redirección.
+
+Ahora bien, si al escribir manualmente la URL http://localhost:5173/auth/login no te redirige al inicio, el problema está reducido a un solo lugar: el Guard no está detectando que el usuario está autenticado.
+
+Aquí tienes los pasos finales para que la redirección manual funcione al 100%:
+
+1. Asegura la Persistencia del Token
+   Al escribir la URL manualmente, la aplicación se recarga por completo. Si el token en tu authStore no se recupera del localStorage, Pinia se inicia vacío y el Guard cree que no estás logueado.
+
+Revisa tu authStore.js y asegúrate de tener algo como esto:
+
+JavaScript
+// src/modules/auth/stores/authStore.js
+import { ref, computed } from 'vue';
+import { defineStore } from 'pinia';
+
+export const useAuthStore = defineStore('auth', () => {
+// 1. Inicializar con lo que haya en el localStorage
+const token = ref(localStorage.getItem('token') || null);
+
+    // 2. El getter detectará si hay token al cargar la página
+    const isAuthenticated = computed(() => !!token.value);
+
+    // ... resto de tus acciones (login, logout, etc)
+    return { token, isAuthenticated };
+
+}); 2. Sincronía en el Router Principal
+Verifica que en el archivo src/router/index.js el objeto meta tenga la "s" final para que coincida exactamente con lo que el Guard busca (requiresGuest).
+
+JavaScript
+// src/router/index.js
+{
+path: '/auth',
+meta: {
+requiresGuest: true // <-- Verifica la 's' aquí
+},
+component: () => import('@/layouts/auth/AuthLayout.vue'),
+children: authRoutes,
+}, 3. El Guard Definitivo
+Asegúrate de que tu authGuard.js use exactamente el nombre de la propiedad que definiste arriba. Aquí te dejo la versión más limpia para evitar errores:
+
+JavaScript
+// src/router/guards/authGuard.js
+import { useAuthStore } from "@/modules/auth/stores/authStore";
+
+export const authGuard = (to, from, next) => {
+const authStore = useAuthStore();
+
+    // CASO 1: La ruta requiere estar logueado (ej. /admin)
+    if (to.matched.some(record => record.meta.requiresAuth) && !authStore.isAuthenticated) {
+        next({ name: 'auth-login' });
+    }
+    // CASO 2: La ruta es para invitados (ej. /auth/login) y el usuario YA tiene sesión
+    else if (to.matched.some(record => record.meta.requiresGuest) && authStore.isAuthenticated) {
+        next({ name: 'home' }); // Esto te mandará a http://localhost:5173/
+    }
+    // CASO 3: Cualquier otro caso
+    else {
+        next();
+    }
+
+}
+Tip Pro: He cambiado to.meta por to.matched.some(...). Esto es más seguro porque busca la propiedad meta tanto en la ruta hija como en todas las rutas padres (como tu /auth principal).
+
+Verificación final
+Inicia sesión en tu app normalmente.
+
+Abre una nueva pestaña o escribe en la barra de direcciones: http://localhost:5173/auth/login.
+
+Presiona Enter.
+
+Si el Guard y el Store están sincronizados, deberías ver cómo la URL cambia instantáneamente a http://localhost:5173/ (el Home).
+
+¿Te gustaría que revisemos la función de login en tu Store para confirmar que el token se esté guardando correctamente en el localStorage?
+
+para verificaon del paso 1 en src/modules/auth/stores/authStore.js
+
+Tengo
+
+import { ref, computed } from 'vue'
+
+import { defineStore } from 'pinia'
+
+// Llamamos al servicio definido (usando tu ruta relativa o el alias @)
+
+import authService from '../services/authService'
+
+// Utilizamos la sintaxis de Composition API
+
+export const useAuthStore = defineStore('auth', () => {
+
+// Definimos una constante token que recupera el valor del localStorage al iniciar
+
+//esta es la forma de recuperar local storage: localStorage.getItem('access_token')
+
+const token = ref(localStorage.getItem('access_token') || null)
+
+// Propiedad computada para saber si el usuario está autenticado
+
+// Retorna true si hay token, false si es null,
+
+const isAuthenticated = computed(() => !!token.value)
+
+// Función asíncrona para manejar el inicio de sesión
+
+async function login(credentials) {
+
+try {
+
+// Accedemos al servicio y ejecutamos el método login
+
+// Esperamos la respuesta del authService
+
+const response = await authService.login(credentials)
+
+// Actualizamos la referencia reactiva para que la UI se entere del cambio
+
+token.value = response.access_token
+
+// Almacenamos en el localStorage el token enviado por la API
+
+localStorage.setItem('access_token', response.access_token)
+
+// Retornamos la respuesta para que el componente pueda usarla (ej. redireccionar)
+
+return response
+
+} catch (error) {
+
+// Capturamos el error del servicio y lo seguimos difundiendo
+
+console.error('Error detectado en el Store:', error)
+
+throw error
+
+}
+
+}
+
+// Retornamos los valores y métodos para que sean accesibles en los componentes
+
+return {
+
+token,
+
+isAuthenticated,
+
+login,
+
+}
+
+})
+
+en src/router/index.js
+
+tengo:
+
+import { createRouter, createWebHistory } from 'vue-router'
+
+import publicRoutes from '@/modules/public/router/index'
+
+import authRoutes from '@/modules/auth/router/index'
+
+import adminRoutes from '@/modules/admin/dashboard/router/index.js'
+
+import { authGuard } from '@/router/guards/authGuard';
+
+const router = createRouter({
+
+history: createWebHistory(import.meta.env.BASE_URL),
+
+routes: [
+
+{
+
+path: '/',
+
+component: () => import('@/layouts/public/PublicLayout.vue'),
+
+children: publicRoutes,
+
+},
+
+{
+
+path: '/auth',
+
+meta: {
+
+requiresGuest: true//con estas rutas podemos ingresar si no estamos autenticasdos
+
+},
+
+component: () => import('@/layouts/auth/AuthLayout.vue'),
+
+children: authRoutes,
+
+},
+
+{
+
+path: '/admin',
+
+meta: {
+
+requiresAuth: true //con esto para ingresar a este grupo de rutas se requiere autenticación
+
+},
+
+component: () => import('@/layouts/admin/AdminLayout.vue'),
+
+// Al entrar a /admin, redirige automáticamente a la ruta hija con ese nombre
+
+redirect: { name: 'admin.dashboard' },
+
+children: [...adminRoutes],
+
+},
+
+],
+
+})
+
+// Agregamos el guard de manera global
+
+//despues de importarse se usa
+
+export default router
+
+y 3 el guard definitivo en:
+
+src/router/guards/authGuard.js
+
+import { useAuthStore } from "@/modules/auth/stores/authStore";
+
+export const authGuard = (to, from, next) => {
+
+const authStore = useAuthStore();
+
+console.log('¿Hacia dónde va?:', to.path);
+
+console.log('¿Requiere invitado?:', to.meta.requiresGuest);
+
+console.log('¿Está autenticado?:', authStore.isAuthenticated);
+
+// Si la ruta requiere auth y el usuario NO está autenticado
+
+if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+
+next({ name: 'auth-login' }); // Usa el nombre exacto de tu ruta
+
+}
+
+// Si la ruta es para invitados (login/reg) y el usuario YA está autenticado
+
+else if (to.meta.requiresGuest && authStore.isAuthenticated) {
+
+console.log('Redirigiendo a home por sesión activa...');
+
+next({ name: 'home' });
+
+}else{ //Si no es ni uno ni otro que me deje continuar
+
+next() //hacemos en continuar sigue tu camino
+
+}
+
+}
+
+Tu configuración de Pinia y el Router ahora se ve muy sólida. El uso de localStorage.getItem('access_token') al inicio del store es la clave para que, al escribir la URL manualmente, el sistema no "olvide" quién eres.
+
+Sin embargo, falta un pequeño detalle técnico para activar el Guard. En tu código de src/router/index.js, importaste el authGuard pero no lo estás ejecutando.
+
+1. Activa el Guard en el Router
+   Para que todo ese código funcione, debes decirle al router que pase por esa función antes de cada navegación. Agrega esta línea antes del export default router:
+
+JavaScript
+// src/router/index.js
+
+// ... resto del código
+
+// ACTIVA ESTA LÍNEA:
+router.beforeEach(authGuard);
+
+export default router; 2. El detalle del "Inheritance" (Herencia de Meta)
+En tu configuración de rutas, pusiste requiresGuest: true en la ruta padre /auth. Cuando escribes manualmente http://localhost:5173/auth/login, el objeto to.meta de Vue Router combina las propiedades del padre y del hijo.
+
+Padre (/auth): tiene requiresGuest: true.
+
+Hijo (/login): hereda requiresGuest: true.
+
+Por lo tanto, tu lógica en el Guard: else if (to.meta.requiresGuest && authStore.isAuthenticated) Debería funcionar correctamente ahora.
+
+Resumen del flujo de redirección manual:
+Usuario logueado tiene un access_token en el almacenamiento del navegador.
+
+Escribe http://localhost:5173/auth/login y da Enter.
+
+La app carga, Pinia lee el token: isAuthenticated se vuelve true.
+
+El router.beforeEach ejecuta tu authGuard.
+
+console.log mostrará:
+
+¿Requiere invitado?: true
+
+¿Está autenticado?: true
+
+Se ejecuta next({ name: 'home' }).
+
+El navegador te muestra la página de inicio instantáneamente.
+
+3. Una última comprobación (El nombre de la ruta)
+   En tu authStore.js, cuando haces el login, asegúrate de redirigir al usuario al lugar correcto. Y en el Guard, asegúrate de que el nombre del login sea exacto.
+
+En tu Guard usas: next({ name: 'auth-login' }).
+
+En tu archivo de rutas de auth (src/modules/auth/router/index.js), verifica que la ruta de login se llame exactamente auth-login.
+
+¿Qué sigue? Prueba ahora escribiendo la URL manual. Si por alguna razón el console.log dice que isAuthenticated es false a pesar de estar logueado, significa que el nombre de la llave en el Store (access_token) podría ser diferente al que recibes de tu API de Laravel (a veces Laravel usa token o original.access_token).
