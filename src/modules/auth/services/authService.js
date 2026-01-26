@@ -21,11 +21,14 @@ export default {
   },
   async logout() {
     try {
-      const response = await apiClient.post('/auth/logout') //no pasamos ninguna credencial
-
+      const response = await apiClient.post('/auth/logout')
       return response.data
     } catch (error) {
-      throw error.response.data
+      // Validamos si existe response antes de acceder a data
+      if (error.response && error.response.data) {
+        throw error.response.data
+      }
+      throw { message: 'Error de red o servidor no alcanzable' }
     }
   },
   async refresh() {

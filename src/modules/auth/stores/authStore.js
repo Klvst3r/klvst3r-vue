@@ -64,6 +64,13 @@ export const useAuthStore = defineStore('auth', () => {
 
       //throw error.response.data
       throw error
+    } finally {
+      //  Esto se ejecuta SIEMPRE, falle o no la petición
+      localStorage.removeItem('access_token')
+      token.value = null
+
+      // Opcional: Redirigir al login después de limpiar
+      // router.push({ name: 'auth-login' })
     }
   }
   // Retornamos los valores y métodos para que sean accesibles en los componentes

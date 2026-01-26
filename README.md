@@ -3603,4 +3603,962 @@ En que componente se va a utilzar, justamente en el dropdown del usuario queremo
 
 Entonces desde PublicNav, un avez que estamos aca vamos a decir que se mantenga a la escucha del evetno click y cada vez que hagamos click llamemos a la tienda authStore y ejecutar el metodo logout
 
-07.03
+El boton logout esta en el componente PublicNav, entonces vamos a ir aca y vamos a decir que se mantenga a la escucha del evento click y cada vez que hagamos click llamemos a la tienda authStore y ejecutar el metodo logout
+
+Estara en escucha del evento click
+
+@click="authStore.logout()"
+
+Y cada vez que se haga click llamamos a la tienda, authStore ejecutando el metodo logout.
+
+Entonces con esto cerrariamos sesión en la teoria, veoamos en la realiad.
+
+Inspeccionamos al hacer click sobre el boton logout
+
+En consola marca un error que falta solucionar la promesa
+
+authService.js:24
+POST http://localhost:8000/api/auth/logout 401 (Unauthorized)
+
+authStore.js:63 Error detectado en el Store:
+{message: 'Unauthenticated.'}
+
+chunk-2MKFL3BX.js?v=67ed8ba1:2195 [Vue warn]: Unhandled error during execution of native event handler
+at <DropdownMenu >
+at <PublicNav >
+at <PublicLayout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref<
+Proxy(Object) {\_\_v_skip: true}
+
+> > at <RouterView >
+> > at <App>
+
+(index):1 Uncaught (in promise)
+{message: 'Unauthenticated.'}
+
+﻿
+
+La promesa no ha logrado ser resuelta, hay un error 401, lo que pasa es que si revisamos en postman y abrimos la peticion logout, cuando se realizaba la petición, era dentro de las cabeceras mandabamos el token de autenticación que es el tocken que precisamente queremos inhabilitar, ya no podriamos utilizar.
+
+Pero ahora cuando hacemos la petición hacia la ruta logout, no estamos mandando el token
+
+## Envio de token de autenticación
+
+Lntonces para enviar el token, lo vamos a mandar desde el siguientelgar:
+
+En el archivo de configuración de Axios, queremos rabajar en esta zona:
+
+src/api/axiosConfig.js
+
+import axios from 'axios'
+
+const apiClient = axios.create({
+baseURL: 'http://localhost:8000/api',
+headers: {
+'Content-Type': 'application/json',
+Accept: 'application/json',
+},
+})
+
+export default apiClient
+
+Lo que hacermos aaca es trabajar en algo que se conoce como interceptores, es decir que capture, la peticiónque estamos haciendo aca arriba y le agreguemos algo.
+
+Entonces para agregar un interceptos lo que tenemos que hacer es en la configuracion de axios.
+
+Llamos al api client y despues llamaamos a interceptors.
+
+apiClient.interceptors.request.use(() => {
+
+});
+
+Debe de recibir la configuración que tenga nuestra petición aca. Eso se recibe en una variable llamada config, una vez recibida podremos agregarle mas cosas.
+
+Lo que se va a agregar es definir una constante, intentando recuparar lo que tengamos en local storage, recuperando con gettem lo que tengamos en un campo llamado "access_token"
+
+Si tenemos algo, es decir un token, lo que vamos a hacer es que queremos agregarla mas cosas a la configuración de axio
+
+//Para logout, agregamos un interceptor de peticiones
+// este metodo espera que le paemos una funcion
+apiClient.interceptors.request.use(() => {
+const token = localStorage.getItem('access_token')
+
+if (token) {
+//queremos ingresar a la configracuón, que accedeamosa las cabecerasn agregando un campo que se va a autilizar
+config.headers.Authorization = `Bearer ${token}` //La palabra Bearer y lo concatenamos con el token interceptado,
+}
+
+//y finalmente tenemos que retornar la configuración
+return config
+})
+
+//Si no exportamos explicitamente el objeto, por defecto se exportara el objeto que se define en la primera linea de codigo, en este caso el objeto apiClientm esta permanece privada dentro de este archivo
+export default apiClient
+
+entonces en cada peticion que nos hagamos en este momento , si es que existe un token, lo va a agregar en la cabecera
+
+Como el dropdown tiene un comportamiento inesperado nos vamos a
+
+src/modules/shared/components/DropdownMenu.vue
+
+agregando en el modulo donde se cargan todos los dropdown.
+
+Le damos el valor de click y cambiando el valor de opein por false.
+
+De esta manera iniciamo sesión, y estan do en home, hacemos lcick en logout cierra mientras le da tiempo de montar la solicitud a la api, y cuando volvemos pinta iniciar sesión nuevamente.
+
+y registrarse.
+
+En un futuro lo que vamoa a ver es como poder recuparrar la inforamción del usuario.
+
+Aca hay un error a modificar y corregir.
+
+## Corrección del error:
+
+Efectivamente, el problema de por qué no te redirige a home es que la ruta con ese nombre específico no está activa o no existe dentro de los arreglos que estás combinando.
+
+Para que next({ name: 'home' }) funcione, el router debe encontrar una ruta que tenga exactamente name: 'home'.
+
+1. Revisa homeRoutes
+
+Dado que estás usando desestructuración (...homeRoutes), lo más probable es que el nombre "home" deba estar dentro de src/modules/public/home/router/index.js.
+
+Abre ese archivo y asegúrate de que tenga esta estructura:
+JavaScript
+
+// src/modules/public/home/router/index.js
+export default [
+{
+path: '', // Esto hace que sea la ruta raíz del módulo
+name: 'home', // <--- ESTE ES EL NOMBRE QUE BUSCA EL GUARD
+component: () => import('@/modules/public/home/views/HomeView.vue')
+}
+]
+
+2. El conflicto en public/router/index.js
+
+En el código que mostraste, tienes comentada la ruta manual:
+JavaScript
+
+// {
+// path: '/',
+// name: 'home',
+// component: () => import('@/modules/public/views/HomeView.vue'),
+// },
+
+Si homeRoutes (el archivo que importas) no tiene una ruta con el nombre home, el Guard fallará porque intentará redirigir a un destino inexistente. 3. Solución recomendada
+
+Para mantener el orden que llevas, asegúrate de que el archivo principal de rutas públicas se vea así:
+JavaScript
+
+const routes = [
+// No necesitas la ruta comentada si ya viene dentro de ...homeRoutes
+...homeRoutes,
+...aboutRoutes,
+...blogRoutes,
+...contactRoutes,
+]
+
+export default routes
+
+4. ¿Por qué es importante para la redirección manual?
+
+Cuando escribes en el navegador http://localhost:5173/auth/login, el flujo es este:
+
+    Carga del Guard: El Guard detecta que ya estás autenticado (porque el token existe en el Store).
+
+    Redirección: El Guard ejecuta next({ name: 'home' }).
+
+    Búsqueda: El Router busca en todo su árbol de rutas quién se llama "home".
+
+    Fallo/Éxito: * Si no existe: Vue Router lanzará un error en consola diciendo que la ruta "home" no existe.
+
+        Si existe: Te mandará a la URL vinculada a ese nombre (que suele ser /).
+
+Verificación final
+
+Para confirmar que todo está vinculado correctamente, revisa estos tres puntos:
+
+    En el Guard: Que use next({ name: 'home' }).
+
+    En el Router Principal: Que la ruta de auth tenga meta: { requiresGuest: true } (con la s).
+
+    En homeRoutes: Que la ruta principal tenga name: 'home'.
+
+¿Qué pasa si cambias el nombre en el Guard a uno que sí estés seguro que existe? Por ejemplo, si tienes una ruta llamada dashboard, intenta next({ name: 'admin.dashboard' }) solo para probar si la redirección manual funciona.
+
+¿Quieres que revisemos el contenido de src/modules/public/home/router/index.js para ver cómo está nombrada la ruta ahí?
+
+en mi archivo
+
+src/modules/public/home/router/index.js
+
+tengo:
+
+const routes = [
+
+//Definimos nuestra primera ruta
+
+{
+
+path: '',
+
+name: 'home',
+
+component: () => import('@/modules/public/home/views/HomeView.vue'),
+
+},
+
+]
+
+export default routes
+
+¡Perfecto! El archivo home/router/index.js está correcto. Tiene el name: 'home' que el Guard necesita para hacer la redirección.
+
+Ahora bien, si al escribir manualmente la URL http://localhost:5173/auth/login no te redirige al inicio, el problema está reducido a un solo lugar: el Guard no está detectando que el usuario está autenticado.
+
+Aquí tienes los pasos finales para que la redirección manual funcione al 100%:
+
+1. Asegura la Persistencia del Token
+
+Al escribir la URL manualmente, la aplicación se recarga por completo. Si el token en tu authStore no se recupera del localStorage, Pinia se inicia vacío y el Guard cree que no estás logueado.
+
+Revisa tu authStore.js y asegúrate de tener algo como esto:
+JavaScript
+
+// src/modules/auth/stores/authStore.js
+import { ref, computed } from 'vue';
+import { defineStore } from 'pinia';
+
+export const useAuthStore = defineStore('auth', () => {
+// 1. Inicializar con lo que haya en el localStorage
+const token = ref(localStorage.getItem('token') || null);
+
+    // 2. El getter detectará si hay token al cargar la página
+    const isAuthenticated = computed(() => !!token.value);
+
+    // ... resto de tus acciones (login, logout, etc)
+    return { token, isAuthenticated };
+
+});
+
+2. Sincronía en el Router Principal
+
+Verifica que en el archivo src/router/index.js el objeto meta tenga la "s" final para que coincida exactamente con lo que el Guard busca (requiresGuest).
+JavaScript
+
+// src/router/index.js
+{
+path: '/auth',
+meta: {
+requiresGuest: true // <-- Verifica la 's' aquí
+},
+component: () => import('@/layouts/auth/AuthLayout.vue'),
+children: authRoutes,
+},
+
+3. El Guard Definitivo
+
+Asegúrate de que tu authGuard.js use exactamente el nombre de la propiedad que definiste arriba. Aquí te dejo la versión más limpia para evitar errores:
+JavaScript
+
+// src/router/guards/authGuard.js
+import { useAuthStore } from "@/modules/auth/stores/authStore";
+
+export const authGuard = (to, from, next) => {
+const authStore = useAuthStore();
+
+    // CASO 1: La ruta requiere estar logueado (ej. /admin)
+    if (to.matched.some(record => record.meta.requiresAuth) && !authStore.isAuthenticated) {
+        next({ name: 'auth-login' });
+    }
+    // CASO 2: La ruta es para invitados (ej. /auth/login) y el usuario YA tiene sesión
+    else if (to.matched.some(record => record.meta.requiresGuest) && authStore.isAuthenticated) {
+        next({ name: 'home' }); // Esto te mandará a http://localhost:5173/
+    }
+    // CASO 3: Cualquier otro caso
+    else {
+        next();
+    }
+
+}
+
+    Tip Pro: He cambiado to.meta por to.matched.some(...). Esto es más seguro porque busca la propiedad meta tanto en la ruta hija como en todas las rutas padres (como tu /auth principal).
+
+Verificación final
+
+    Inicia sesión en tu app normalmente.
+
+    Abre una nueva pestaña o escribe en la barra de direcciones: http://localhost:5173/auth/login.
+
+    Presiona Enter.
+
+Si el Guard y el Store están sincronizados, deberías ver cómo la URL cambia instantáneamente a http://localhost:5173/ (el Home).
+
+¿Te gustaría que revisemos la función de login en tu Store para confirmar que el token se esté guardando correctamente en el localStorage?
+
+para verificaon del paso 1 en src/modules/auth/stores/authStore.js
+
+Tengo
+
+import { ref, computed } from 'vue'
+
+import { defineStore } from 'pinia'
+
+// Llamamos al servicio definido (usando tu ruta relativa o el alias @)
+
+import authService from '../services/authService'
+
+// Utilizamos la sintaxis de Composition API
+
+export const useAuthStore = defineStore('auth', () => {
+
+// Definimos una constante token que recupera el valor del localStorage al iniciar
+
+//esta es la forma de recuperar local storage: localStorage.getItem('access_token')
+
+const token = ref(localStorage.getItem('access_token') || null)
+
+// Propiedad computada para saber si el usuario está autenticado
+
+// Retorna true si hay token, false si es null,
+
+const isAuthenticated = computed(() => !!token.value)
+
+// Función asíncrona para manejar el inicio de sesión
+
+async function login(credentials) {
+
+try {
+
+// Accedemos al servicio y ejecutamos el método login
+
+// Esperamos la respuesta del authService
+
+const response = await authService.login(credentials)
+
+// Actualizamos la referencia reactiva para que la UI se entere del cambio
+
+token.value = response.access_token
+
+// Almacenamos en el localStorage el token enviado por la API
+
+localStorage.setItem('access_token', response.access_token)
+
+// Retornamos la respuesta para que el componente pueda usarla (ej. redireccionar)
+
+return response
+
+} catch (error) {
+
+// Capturamos el error del servicio y lo seguimos difundiendo
+
+console.error('Error detectado en el Store:', error)
+
+throw error
+
+}
+
+}
+
+// Retornamos los valores y métodos para que sean accesibles en los componentes
+
+return {
+
+token,
+
+isAuthenticated,
+
+login,
+
+}
+
+})
+
+en src/router/index.js
+
+tengo:
+
+import { createRouter, createWebHistory } from 'vue-router'
+
+import publicRoutes from '@/modules/public/router/index'
+
+import authRoutes from '@/modules/auth/router/index'
+
+import adminRoutes from '@/modules/admin/dashboard/router/index.js'
+
+import { authGuard } from '@/router/guards/authGuard';
+
+const router = createRouter({
+
+history: createWebHistory(import.meta.env.BASE_URL),
+
+routes: [
+
+{
+
+path: '/',
+
+component: () => import('@/layouts/public/PublicLayout.vue'),
+
+children: publicRoutes,
+
+},
+
+{
+
+path: '/auth',
+
+meta: {
+
+requiresGuest: true//con estas rutas podemos ingresar si no estamos autenticasdos
+
+},
+
+component: () => import('@/layouts/auth/AuthLayout.vue'),
+
+children: authRoutes,
+
+},
+
+{
+
+path: '/admin',
+
+meta: {
+
+requiresAuth: true //con esto para ingresar a este grupo de rutas se requiere autenticación
+
+},
+
+component: () => import('@/layouts/admin/AdminLayout.vue'),
+
+// Al entrar a /admin, redirige automáticamente a la ruta hija con ese nombre
+
+redirect: { name: 'admin.dashboard' },
+
+children: [...adminRoutes],
+
+},
+
+],
+
+})
+
+// Agregamos el guard de manera global
+
+//despues de importarse se usa
+
+export default router
+
+y 3 el guard definitivo en:
+
+src/router/guards/authGuard.js
+
+import { useAuthStore } from "@/modules/auth/stores/authStore";
+
+export const authGuard = (to, from, next) => {
+
+const authStore = useAuthStore();
+
+console.log('¿Hacia dónde va?:', to.path);
+
+console.log('¿Requiere invitado?:', to.meta.requiresGuest);
+
+console.log('¿Está autenticado?:', authStore.isAuthenticated);
+
+// Si la ruta requiere auth y el usuario NO está autenticado
+
+if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+
+next({ name: 'auth-login' }); // Usa el nombre exacto de tu ruta
+
+}
+
+// Si la ruta es para invitados (login/reg) y el usuario YA está autenticado
+
+else if (to.meta.requiresGuest && authStore.isAuthenticated) {
+
+console.log('Redirigiendo a home por sesión activa...');
+
+next({ name: 'home' });
+
+}else{ //Si no es ni uno ni otro que me deje continuar
+
+next() //hacemos en continuar sigue tu camino
+
+}
+
+}
+
+Tu configuración de Pinia y el Router ahora se ve muy sólida. El uso de localStorage.getItem('access_token') al inicio del store es la clave para que, al escribir la URL manualmente, el sistema no "olvide" quién eres.
+
+Sin embargo, falta un pequeño detalle técnico para activar el Guard. En tu código de src/router/index.js, importaste el authGuard pero no lo estás ejecutando.
+
+1. Activa el Guard en el Router
+
+Para que todo ese código funcione, debes decirle al router que pase por esa función antes de cada navegación. Agrega esta línea antes del export default router:
+JavaScript
+
+// src/router/index.js
+
+// ... resto del código
+
+// ACTIVA ESTA LÍNEA:
+router.beforeEach(authGuard);
+
+export default router;
+
+2. El detalle del "Inheritance" (Herencia de Meta)
+
+En tu configuración de rutas, pusiste requiresGuest: true en la ruta padre /auth. Cuando escribes manualmente http://localhost:5173/auth/login, el objeto to.meta de Vue Router combina las propiedades del padre y del hijo.
+
+    Padre (/auth): tiene requiresGuest: true.
+
+    Hijo (/login): hereda requiresGuest: true.
+
+Por lo tanto, tu lógica en el Guard: else if (to.meta.requiresGuest && authStore.isAuthenticated) Debería funcionar correctamente ahora.
+Resumen del flujo de redirección manual:
+
+    Usuario logueado tiene un access_token en el almacenamiento del navegador.
+
+    Escribe http://localhost:5173/auth/login y da Enter.
+
+    La app carga, Pinia lee el token: isAuthenticated se vuelve true.
+
+    El router.beforeEach ejecuta tu authGuard.
+
+    console.log mostrará:
+
+        ¿Requiere invitado?: true
+
+        ¿Está autenticado?: true
+
+    Se ejecuta next({ name: 'home' }).
+
+    El navegador te muestra la página de inicio instantáneamente.
+
+3. Una última comprobación (El nombre de la ruta)
+
+En tu authStore.js, cuando haces el login, asegúrate de redirigir al usuario al lugar correcto. Y en el Guard, asegúrate de que el nombre del login sea exacto.
+
+    En tu Guard usas: next({ name: 'auth-login' }).
+
+    En tu archivo de rutas de auth (src/modules/auth/router/index.js), verifica que la ruta de login se llame exactamente auth-login.
+
+¿Qué sigue? Prueba ahora escribiendo la URL manual. Si por alguna razón el console.log dice que isAuthenticated es false a pesar de estar logueado, significa que el nombre de la llave en el Store (access_token) podría ser diferente al que recibes de tu API de Laravel (a veces Laravel usa token o original.access_token).
+
+¿Te gustaría que verifiquemos cómo responde tu servidor de Laravel para asegurar que response.access_token sea la ruta correcta del dato?
+
+Cintnuabndo con el tema y de cerrar sesión primero en Primero en
+
+authService: tenemos:
+
+src/modules/auth/services/authService.js
+
+// import apiClient from '@/axios/axiosConfig' //nos marca erro por la ruta de la configruaicon de axios cambiamos a:
+
+//import apiClient from '../../../api/axiosConfig'
+
+import apiClient from '@/api/axiosConfig' // Sin llaves porque es export default
+
+export default {
+
+//Accedemos primero a apiClient, y leugo hacemos una peticion a la api de tipo post, axios va a recibir peticiones asincronas
+
+async login(credentials) {
+
+try {
+
+const response = await apiClient.post('/auth/login', credentials) //Colocamos los datos faltantes de la uri, y credenciales,
+
+return response.data
+
+} catch (error) {
+
+// Si el servidor respondió con un error (401, 422, etc.)
+
+if (error.response) {
+
+throw error.response.data
+
+}
+
+// Si el error es de red o el servidor no responde
+
+throw { message: 'Error de conexión con el servidor' }
+
+}
+
+},
+
+async logout() {
+
+try {
+
+const response = await apiClient.post('/auth/logout') //no pasamos ninguna credencial
+
+return response.data
+
+} catch (error) {
+
+throw error.response.data
+
+}
+
+},
+
+async refresh() {
+
+try {
+
+const response = await apiClient.post('/auth/refresh')
+
+return response.data
+
+} catch (error) {
+
+throw error.response.data
+
+}
+
+},
+
+async me() {
+
+//Obtenemos los datos del usuario
+
+try {
+
+const response = await apiClient.get('/auth/me')
+
+return response.data
+
+} catch (error) {
+
+throw error.response.data
+
+}
+
+},
+
+}
+
+En src/modules/auth/stores/authStore.js
+
+impreementamos el metodo logout
+
+async function logout() {
+
+try {
+
+// Accedemos al servicio y ejecutamos el método logout, pedimos que llame a nuestro servicio
+
+// Esperamos la respuesta del authService
+
+//const response = await authService.logout()
+
+await authService.logout()
+
+//ahora lo que toca despues de esperar que se resuelva la promesa para eliminar del localstorage esa variable llamada access_token
+
+localStorage.removeItem('access_token')
+
+//Tambien lo que queremos que ocurra es resetear el valor del token para que el estado isAutehticated cambie a false, con esto ceramos lasesion
+
+token.value = null
+
+// Actualizamos la referencia reactiva para que la UI se entere del cambio
+
+//token.value = null
+
+// Borramos el token almacenado en el localStorage
+
+} catch (error) {
+
+// Capturamos el error del servicio y lo seguimos difundiendo
+
+console.error('Error detectado en el Store:', error)
+
+//throw error.response.data
+
+throw error
+
+}
+
+}
+
+// Retornamos los valores y métodos para que sean accesibles en los componentes
+
+return {
+
+token,
+
+isAuthenticated,
+
+login,
+
+logout,
+
+}
+
+en src/layouts/public/components/PublicNav.vue
+
+agregamos en el boton
+
+</DropdownItem>
+
+<button
+
+@click="authStore.logout()"
+
+class="block text-left w-full px-4 py-2 leading-5 text-gray-700 hover:bg-gray-100"
+
+>
+
+Logout
+
+</button>
+
+en src/api/axiosConfig.js
+
+agregamos un interceptor para ingresar en la configuración de axios, adjuntando el token de la siguente manera:
+
+import axios from 'axios'
+
+const apiClient = axios.create({
+
+baseURL: 'http://localhost:8000/api',
+
+headers: {
+
+'Content-Type': 'application/json',
+
+Accept: 'application/json',
+
+},
+
+})
+
+//Para logout, agregamos un interceptor de peticiones
+
+// este metodo espera que le paemos una funcion
+
+apiClient.interceptors.request.use(() => {
+
+const token = localStorage.getItem('access_token')
+
+if (token) {
+
+//queremos ingresar a la configracuón, que accedeamosa las cabecerasn agregando un campo que se va a autilizar
+
+config.headers.Authorization = `Bearer ${token}` //La palabra Bearer y lo concatenamos con el token interceptado,
+
+}
+
+//y finalmente tenemos que retornar la configuración
+
+return config
+
+})
+
+//Si no exportamos explicitamente el objeto, por defecto se exportara el objeto que se define en la primera linea de codigo, en este caso el objeto apiClientm esta permanece privada dentro de este archivo
+
+export default apiClient
+
+en el dropdownMenu aregamos
+
+src/modules/shared/components/DropdownMenu.vue
+
+<script setup>
+
+import { ref } from 'vue'
+
+
+const open = ref(false)
+
+</script>
+
+<template>
+
+<div class="relative">
+
+<div @click="open = !open">
+
+<slot name="trigger"></slot>
+
+</div>
+
+<div
+
+@click="open = false"
+
+v-show="open"
+
+class="absolute z-50 end-0 mt-2 w-48"
+
+>
+
+<div
+
+class="bg-white rounded-md shadow-lg py-2 px-2 font-size-sm text-gray-700"
+
+>
+
+<slot></slot>
+
+</div>
+
+</div>
+
+</div>
+
+</template>
+
+pero en la consola nos marca:
+
+al hacer click sobre hacer logout
+
+authStore.js:63 Error detectado en el Store: TypeError: Cannot read properties of undefined (reading 'data')
+
+at Object.logout (authService.js:28:28)
+
+at async Proxy.logout (authStore.js:50:7)
+
+logout @ authStore.js:63
+
+await in logout
+
+wrappedAction @ pinia.js?v=67ed8ba1:5507
+
+store.<computed> @ pinia.js?v=67ed8ba1:5204
+
+\_createElementVNode.onClick.\_cache.<computed>.\_cache.<computed> @ PublicNav.vue:63
+
+callWithErrorHandling @ chunk-2MKFL3BX.js?v=67ed8ba1:2342
+
+callWithAsyncErrorHandling @ chunk-2MKFL3BX.js?v=67ed8ba1:2349
+
+invoker @ chunk-2MKFL3BX.js?v=67ed8ba1:11425Understand this error
+
+chunk-2MKFL3BX.js?v=67ed8ba1:2195 [Vue warn]: Unhandled error during execution of native event handler
+
+at <DropdownMenu >
+
+at <PublicNav >
+
+at <PublicLayout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) {\_\_v_skip: true} > >
+
+at <RouterView >
+
+at <App>
+
+warn$1 @ chunk-2MKFL3BX.js?v=67ed8ba1:2195
+
+logError @ chunk-2MKFL3BX.js?v=67ed8ba1:2406
+
+handleError @ chunk-2MKFL3BX.js?v=67ed8ba1:2398
+
+(anonymous) @ chunk-2MKFL3BX.js?v=67ed8ba1:2352
+
+Promise.catch
+
+callWithAsyncErrorHandling @ chunk-2MKFL3BX.js?v=67ed8ba1:2351
+
+invoker @ chunk-2MKFL3BX.js?v=67ed8ba1:11425Understand this warning
+
+authService.js:28 Uncaught (in promise) TypeError: Cannot read properties of undefined (reading 'data')
+
+at Object.logout (authService.js:28:28)
+
+at async Proxy.logout (authStore.js:50:7)
+
+El error que estás experimentando se debe a dos problemas principales en tu configuración: un error de lógica en el interceptor de Axios y un manejo de errores en el servicio que intenta acceder a una propiedad de un objeto que no existe.
+
+Aquí tienes la solución paso a paso para corregirlo:
+
+1. Corrección del Interceptor (El problema raíz)
+
+En tu archivo src/api/axiosConfig.js, la función del interceptor debe recibir el objeto config. Actualmente no lo estás declarando en los parámetros, por lo que config es undefined y la petición falla antes de salir.
+
+Cámbialo así:
+JavaScript
+
+// src/api/axiosConfig.js
+
+// ✅ El parámetro 'config' es obligatorio para poder modificarlo
+apiClient.interceptors.request.use((config) => {
+const token = localStorage.getItem('access_token')
+
+if (token) {
+// Agregamos el token a las cabeceras
+config.headers.Authorization = `Bearer ${token}`
+}
+
+return config
+}, (error) => {
+return Promise.reject(error)
+})
+
+2. Corrección en authService.js (Evitar el TypeError)
+
+El error Cannot read properties of undefined (reading 'data') ocurre en el catch de tu método logout. Cuando ocurre un error (como el del interceptor), el objeto error.response puede no existir.
+
+Ajusta el manejo de errores:
+JavaScript
+
+// src/modules/auth/services/authService.js
+
+async logout() {
+try {
+const response = await apiClient.post('/auth/logout')
+return response.data
+} catch (error) {
+// ✅ Validamos si existe response antes de acceder a data
+if (error.response && error.response.data) {
+throw error.response.data
+}
+throw { message: 'Error de red o servidor no alcanzable' }
+}
+},
+
+3. Mejora en el Logout del Store
+
+Para que la experiencia de usuario sea mejor, es recomendable limpiar el localStorage y el estado de Pinia incluso si la petición al servidor falla (por ejemplo, si el token ya expiró en el servidor, igual queremos que el usuario salga de la app localmente).
+
+Actualiza tu función en authStore.js:
+JavaScript
+
+async function logout() {
+try {
+// Intentamos avisar al backend
+await authService.logout()
+} catch (error) {
+console.warn('El servidor no pudo procesar el logout, pero limpiaremos la sesión local.')
+} finally {
+// ✅ Esto se ejecuta SIEMPRE, falle o no la petición
+localStorage.removeItem('access_token')
+token.value = null
+
+    // Opcional: Redirigir al login después de limpiar
+    // router.push({ name: 'auth-login' })
+
+}
+}
+
+4. Resumen de por qué fallaba:
+
+   Interceptor: Al no recibir config como argumento, Axios intentaba leer undefined.headers, lo cual abortaba la ejecución.
+
+   Service: Al fallar la petición por el error del interceptor, el objeto error.response era undefined.
+
+   TypeError: Tu código en el catch hacía error.response.data. Como error.response era undefined, lanzaba el error de "Cannot read properties of undefined".
+
+¿Cómo probarlo ahora?
+
+    Recarga la página (F5) para limpiar errores anteriores.
+
+    Asegúrate de estar logueado.
+
+    Haz clic en el botón de Logout.
+
+Deberías ver en la pestaña Network (Red) de tu navegador una petición POST a /auth/logout con el header Authorization: Bearer ... y, tras completarse, tu Store debería cambiar isAuthenticated a false.

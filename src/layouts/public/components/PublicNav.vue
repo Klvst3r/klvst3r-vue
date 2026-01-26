@@ -10,14 +10,12 @@ import AppLogo from '@/modules/shared/components/AppLogo.vue'
 import DropdownMenu from '@/modules/shared/components/DropdownMenu.vue'
 import DropdownItem from '@/modules/shared/components/DropdownItem.vue'
 
-
-//Llamar al atienda para ocltar opciones del dropdown 
+//Llamar al atienda para ocltar opciones del dropdown
 import { useAuthStore } from '@/modules/auth/stores/authStore'
 
 //La vamos a utilizar a traves de una constante
 
-const authStore = useAuthStore();
-
+const authStore = useAuthStore()
 
 const openMenu = ref(false)
 </script>
@@ -61,12 +59,15 @@ const openMenu = ref(false)
             >
               Admin
             </DropdownItem>
-            <button class="block text-left w-full px-4 py-2 leading-5 text-gray-700 hover:bg-gray-100" >
+            <button
+              @click="authStore.logout()"
+              class="block text-left w-full px-4 py-2 leading-5 text-gray-700 hover:bg-gray-100"
+            >
               Logout
             </button>
           </template>
           <template v-else>
-              <DropdownItem
+            <DropdownItem
               :to="{
                 name: 'auth-login', // La referencia es: src/modules/auth/router/index.js
               }"

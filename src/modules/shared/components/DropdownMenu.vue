@@ -9,7 +9,11 @@ const open = ref(false)
       <slot name="trigger"></slot>
     </div>
 
-    <div v-show="open" class="absolute z-50 end-0 mt-2 w-48">
+    <div
+      @click="open = false" 
+      v-show="open"
+      class="absolute z-50 end-0 mt-2 w-48"
+    >
       <div
         class="bg-white rounded-md shadow-lg py-2 px-2 font-size-sm text-gray-700"
       >
