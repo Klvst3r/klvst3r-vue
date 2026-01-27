@@ -4691,3 +4691,179 @@ La idea es que si el usuario marca esta opción nosotros deveriamos mantener sie
 Eso se vera en otro capitulo.
 
 Con esto terminamos la sección de login, que es el de registros.
+
+La tienda quedo asi:
+
+import { ref, computed } from 'vue'
+import { defineStore } from 'pinia'
+
+// Llamamos al servicio definido (usando tu ruta relativa o el alias @)
+import authService from '../services/authService'
+
+// Utilizamos la sintaxis de Composition API
+export const useAuthStore = defineStore('auth', () => {
+// --- ESTADO (STATE) ---
+
+// Almacenamos la info del usuario. Usamos "\_" como convención de propiedad privada.
+const \_user = ref(null)
+
+// Recuperamos el token del localStorage al inicializar la tienda para persistir la sesión.
+const token = ref(localStorage.getItem('access_token') || null)
+
+// --- GETTERS (Propiedades Computadas) ---
+
+// Retorna true si el token existe, false si es null. Controla el acceso en los Guards.
+const isAuthenticated = computed(() => !!token.value)
+
+// Exponemos el usuario como solo lectura (computed) para que no se modifique externamente.
+const user = computed(() => \_user.value)
+
+// --- ACCIONES (ACTIONS) ---
+
+/\*\*
+
+- Maneja el inicio de sesión.
+- Almacena el token y busca la información del usuario inmediatamente.
+  \*/
+  async function login(credentials) {
+  try {
+  // Esperamos la respuesta del servicio con el access_token.
+  const response = await authService.login(credentials)
+
+      // Guardamos en localStorage para que no se pierda al recargar (F5).
+      localStorage.setItem('access_token', response.access_token)
+
+      // Actualizamos la referencia reactiva para que isAuthenticated cambie a true.
+      token.value = response.access_token
+
+      // Una vez tenemos el token, recuperamos los datos del usuario (id, name, email).
+      await fetchUser()
+
+      return response
+
+  } catch (error) {
+  console.error('Error detectado en el Store (Login):', error)
+  // Difundimos el error para que el componente LoginView lo muestre.
+  throw error.response?.data || error
+  }
+  }
+
+/\*\*
+
+- Cierra la sesión del usuario.
+- El bloque 'finally' asegura que la sesión se limpie localmente aunque el servidor falle.
+  \*/
+  async function logout() {
+  try {
+  // Avisamos al backend para invalidar el token.
+  await authService.logout()
+  } catch (error) {
+  console.error('Error detectado en el Store (Logout):', error)
+  } finally {
+  // Se ejecuta SIEMPRE: Limpiamos rastro de sesión para evitar accesos indebidos.
+  localStorage.removeItem('access_token')
+  token.value = null
+  \_user.value = null
+  }
+  }
+
+/\*\*
+
+- Recupera la información del usuario autenticado desde el endpoint /me.
+- Si el token ha caducado, cierra la sesión automáticamente.
+  \*/
+  async function fetchUser() {
+  // Solo actuamos si hay un token activo (isAuthenticated).
+  if (isAuthenticated.value) {
+  try {
+  // Almacenamos la info del usuario en nuestra variable privada.
+  \_user.value = await authService.me()
+  } catch (error) {
+  console.error(
+  'Error al recuperar usuario (Token posiblemente caducado):',
+  error,
+  )
+
+        // Si falla (ej. error 401), forzamos el logout para limpiar el localStorage.
+        await logout()
+        throw error
+      }
+
+  }
+  }
+
+// Retornamos los elementos públicos de la tienda.
+return {
+token,
+isAuthenticated,
+user,
+login,
+logout,
+fetchUser,
+}
+})
+
+y el componente princiapl asi
+
+<script setup>
+import { onMounted } from 'vue' // Importamos onMounted para usarlo en el setup
+import { RouterView } from 'vue-router'
+
+//este access_token estaba en localStorage de src/modules/auth/stores/authStore.js
+//console.log(localStorage.getItem('access_token'))
+
+import { useAuthStore } from './modules/auth/stores/authStore'
+
+//Despues de esto inicializamos la tienda
+const authStore = useAuthStore() //ya tenemos la tienda podemos ocuparla abajo
+
+//queremos trabar en la parte del logout y queremos trabajar cn el ciclo de vida del componente de Vue para ello llamaresmo a onMounted
+// onMounted permite pasarle otra funcion y cualquier cosa que coloquemos se va aejecutar cuando el componente se haya cargado.
+onMounted(async () => {
+  //Al montar el componente vamos a limpiar el localStorage
+  //localStorage.removeItem('access_token')
+  try {
+    //Vamos a llamar al metodo de la tienda que verifica si el usuario esta autenticado
+    //esperamos la respuesta de la información del usuario
+    await authStore.fetchUser() //Busca la ifnormación del usuario autenticado, esperamos lo respuesta, dentro l eagregamos un try catch
+
+    //si logra obtener la ifnoramción del suaurio ahora mosytramos en consola
+    //console.log(authStore.user) //acdedemos a la ifnoramción del usuario, lo activamos si queremos saber los datos del usuario para ver en consola
+    //pero podemos acceder a ella desde authStore a traves de la poriedad cocmputada const user = computed(() => authStore.user) en cualquier componente
+  } catch (error) {
+    //mostramos el error de verlo
+    console.log(error)
+  }
+})
+</script>
+
+<template>
+  <RouterView />
+</template>
+
+<style scoped></style>
+
+Con esto concluyeel sistema de login,
+
+Si queremos activar Remember me, para que siempre este activa su sesión, entonces el token esta caducado lo que deberiamos hacer es generar un nuevo token en caso de que caduque con
+
+auth/refresh
+
+y para ello debemos hacer lo siguiente
+
+1. Crear un endpoint en el backend para refrescar el token
+2. Crear un endpoint en el frontend para refrescar el token
+
+En el backend
+
+1. Crear un endpoint en el backend para refrescar el token
+2. Crear un endpoint en el frontend para refrescar el token
+
+En el frontend
+
+1. Crear un endpoint en el frontend para refrescar el token
+2. Crear un endpoint en el frontend para refrescar el token
+
+En el frontend
+
+Se pasaria al ema de registros de usuarioa pero hasta aca queda el tema de autenticación con Vue

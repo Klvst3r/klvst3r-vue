@@ -43,11 +43,15 @@ export default {
   async me() {
     //Obtenemos los datos del usuario
     try {
-      const response = await apiClient.get('/auth/me')
+      //  Cambiamos .get por .post porque así lo requiere tu API de Laravel
+      const response = await apiClient.post('/auth/me')
 
       return response.data
     } catch (error) {
-      throw error.response.data
+      if (error.response) {
+        throw error.response.data
+      }
+      throw { message: 'Error al obtener datos del usuario' }
     }
   },
 }

@@ -6,78 +6,98 @@ import authService from '../services/authService'
 
 // Utilizamos la sintaxis de Composition API
 export const useAuthStore = defineStore('auth', () => {
-  // Definimos una constante token que recupera el valor del localStorage al iniciar
-  //esta es la forma de recuperar local storage: localStorage.getItem('access_token')
+  // --- ESTADO (STATE) ---
+
+  // Almacenamos la info del usuario. Usamos "_" como convención de propiedad privada.
+  const _user = ref(null)
+
+  // Recuperamos el token del localStorage al inicializar la tienda para persistir la sesión.
   const token = ref(localStorage.getItem('access_token') || null)
 
-  // Propiedad computada para saber si el usuario está autenticado
-  // Retorna true si hay token, false si es null,
+  // --- GETTERS (Propiedades Computadas) ---
+
+  // Retorna true si el token existe, false si es null. Controla el acceso en los Guards.
   const isAuthenticated = computed(() => !!token.value)
 
-  // Función asíncrona para manejar el inicio de sesión
+  // Exponemos el usuario como solo lectura (computed) para que no se modifique externamente.
+  const user = computed(() => _user.value)
+
+  // --- ACCIONES (ACTIONS) ---
+
+  /**
+   * Maneja el inicio de sesión.
+   * Almacena el token y busca la información del usuario inmediatamente.
+   */
   async function login(credentials) {
     try {
-      // Accedemos al servicio y ejecutamos el método login
-      // Esperamos la respuesta del authService
+      // Esperamos la respuesta del servicio con el access_token.
       const response = await authService.login(credentials)
 
-      // Actualizamos la referencia reactiva para que la UI se entere del cambio
-      token.value = response.access_token
-
-      // Almacenamos en el localStorage el token enviado por la API
+      // Guardamos en localStorage para que no se pierda al recargar (F5).
       localStorage.setItem('access_token', response.access_token)
 
-      //para el logaut tambien se borra el local storage y actualizamos el token, esto es para cambiar el estado autenticado, despues de hacer login
+      // Actualizamos la referencia reactiva para que isAuthenticated cambie a true.
       token.value = response.access_token
 
-      // Retornamos la respuesta para que el componente pueda usarla (ej. redireccionar)
+      // Una vez tenemos el token, recuperamos los datos del usuario (id, name, email).
+      await fetchUser()
+
       return response
     } catch (error) {
-      // Capturamos el error del servicio y lo seguimos difundiendo
-      console.error('Error detectado en el Store:', error)
-      //throw error
-      throw error.response.data
+      console.error('Error detectado en el Store (Login):', error)
+      // Difundimos el error para que el componente LoginView lo muestre.
+      throw error.response?.data || error
     }
   }
 
-  //Logout
-
+  /**
+   * Cierra la sesión del usuario.
+   * El bloque 'finally' asegura que la sesión se limpie localmente aunque el servidor falle.
+   */
   async function logout() {
     try {
-      // Accedemos al servicio y ejecutamos el método logout, pedimos que llame a nuestro servicio
-      // Esperamos la respuesta del authService
-      //const response = await authService.logout()
+      // Avisamos al backend para invalidar el token.
       await authService.logout()
-
-      //ahora lo que toca despues de esperar que se resuelva la promesa para eliminar del localstorage esa variable llamada access_token
-      localStorage.removeItem('access_token')
-
-      //Tambien lo que queremos que ocurra es resetear el valor del token para que el estado isAutehticated cambie a false, con esto ceramos lasesion
-      token.value = null
-
-      // Actualizamos la referencia reactiva para que la UI se entere del cambio
-      //token.value = null
-      // Borramos el token almacenado en el localStorage
     } catch (error) {
-      // Capturamos el error del servicio y lo seguimos difundiendo
-      console.error('Error detectado en el Store:', error)
-
-      //throw error.response.data
-      throw error
+      console.error('Error detectado en el Store (Logout):', error)
     } finally {
-      //  Esto se ejecuta SIEMPRE, falle o no la petición
+      // Se ejecuta SIEMPRE: Limpiamos rastro de sesión para evitar accesos indebidos.
       localStorage.removeItem('access_token')
       token.value = null
-
-      // Opcional: Redirigir al login después de limpiar
-      // router.push({ name: 'auth-login' })
+      _user.value = null
     }
   }
-  // Retornamos los valores y métodos para que sean accesibles en los componentes
+
+  /**
+   * Recupera la información del usuario autenticado desde el endpoint /me.
+   * Si el token ha caducado, cierra la sesión automáticamente.
+   */
+  async function fetchUser() {
+    // Solo actuamos si hay un token activo (isAuthenticated).
+    if (isAuthenticated.value) {
+      try {
+        // Almacenamos la info del usuario en nuestra variable privada.
+        _user.value = await authService.me()
+      } catch (error) {
+        console.error(
+          'Error al recuperar usuario (Token posiblemente caducado):',
+          error,
+        )
+
+        // Si falla (ej. error 401), forzamos el logout para limpiar el localStorage.
+        await logout()
+        throw error
+      }
+    }
+  }
+
+  // Retornamos los elementos públicos de la tienda.
   return {
     token,
     isAuthenticated,
+    user,
     login,
     logout,
+    fetchUser,
   }
 })
