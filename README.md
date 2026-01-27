@@ -4562,3 +4562,132 @@ token.value = null
     Haz clic en el botón de Logout.
 
 Deberías ver en la pestaña Network (Red) de tu navegador una petición POST a /auth/logout con el header Authorization: Bearer ... y, tras completarse, tu Store debería cambiar isAuthenticated a false.
+
+## Recuperación de datos del usuario
+
+Queremos ahora poder ver como podemos recuperar la información del usuario autenticado, pararecuparar esta información, vamos a la tienda AuthStore y en la parte final deifnimos un afuncion asincrona llamado fechUser, esta funcion se encargara de buscar, la ifnoramción dle usuario autenticado, pero la buscqueda realizara en caso de que el usuario se encuentra autenticado.
+
+Si el usuario nos encuentra autenticado no tiene caso de que se ejecute este metodo, o la busqueda.
+
+Hacemos mediante una condicional que verifica el value de la propuiedad computada llamada isAtuehnticate, hacemos la consulta, es aconsulta sera:
+
+try catch
+
+Lo que queremos hacer es acceder al servicio llamado authService y en este caso acceder al metedo me(), es el metodo generado en la tiendo authStore.
+
+ahora este valor que se tienen an
+authService.me()
+
+Lo que responda sera la información del usuario, entonces eso se debe almacenar en authStore.
+
+Se alamcenara en una constante que le daremos llamado:
+
+\_user es un objeto reactivo, como convención cada vez que se coloca un guion a la hora de nombrar es por que se esta definiendo una propiedad privada, es algo que se puede retornar para que el usuario pueda acceder a el.
+
+Es una buena convención para que sea de solo lectura no queremos que se pueda modificar. Entonces se define de esta manera.
+
+Se retorna como una propiedad computada.Entonces esperamos a que se resuelva mediante un await y accedemos a la propiedad user y vamosa modificar su value, por que tenemos
+
+\_user.value = await authService.me()
+
+si todo sale bien se almacena en la variable \_user.value.
+
+Pero puede ocurrir que salga mal por ejemplo cuando el token del usuario haya cambiado o caducado.
+
+Al consultar el usuario puede que su token ya haya caducado, entonces en este caso lo que quermoes es que se ejecute el metodo, logout, que hacia una consulta a logout para eliminar el token y
+
+en
+
+localStorage.removeItem('access_token')
+
+Se elimine del localstorage lo que tenemos in el local storage, ahora puede que tengamos un error y es el siguiente, ya que si tratamos de cerrar sesión con un token caducado va a fallar la petición por que uono puedo cerrar sesion con un token caducado, y por lo tanto no se ejecutaria lo siguiente
+
+localStorage.removeItem('access_token');
+token.value = null;
+
+Lo que queremos es que se ejecute si o si este valor los dos comandos anteriores.
+
+Entonces lo que se hara es lo siguiente, despues del cath vamos a colocar un finaly es donde vamos a colocar los dos valores que tenemos aca, y ásamos ese codigo dedando:
+
+finally {
+localStorage.removeItem('access_token');
+token.value = null;
+}
+
+Asi ante cualquier error no tendria ningun problema.
+
+Ahora si yo esoty cerrando sesión y ya tengo información del usuario almacenado aca entonces lo que vamos a hacer es resetear ese valor, es decir, eliminamos de la siguiete manera.
+
+finally {
+localStorage.removeItem('access_token');
+token.value = null;
+\_user.value = null;
+}
+
+Ahora lo que podemos hace es que queremos que cuando notosotro iniciemos sesión se busque la información de este usuario, quremos tenerlo a la mano, ya se genero el token que se tienen con:
+
+const response = await authService.login(ccredentials);
+
+Pero tambien queremos que se busque la inforamción de eseusuario,
+
+Entocnes no dirigimos dentro de AuthService y vamos a decir que queremos llamar al metodo fetchUser()
+
+y retornamos la repsuesta por si queremos analizarlo desde el componente.
+
+Asi el fethUser que se tiene aca, es una funcion asincrona que debemos de esperar que termine la consulta y tendriamos que colocar el await y ya tendriamos nuestro login completo y el logout completo en la tienda authStore, y con el fecthUser tenemos ese completo y vamos a pedir que se retorne esta funcion par que podamos utilizarlo y necesitamos acceder a la ainformación del usuario, que tenemos pero por fuera es decir en:
+
+cons token = ref(localStorage.getItem('access_token') || null)
+
+Por fuera de la tienda, entonces lo que vamos a hacer es definir una constante llamada user computada y retoranr el value
+
+El user lo retornamos, se hace de esta manera para que sea considerado como de solo lectura y no se tenga por modificado.
+
+Es una buena practica a la hora de progrmaar.
+
+Lo qu etenemos es una propiedad llamada user solo se le asignara un valor del usuario cuando iniciamos sesión, pero si ya iniciamos sesión.
+
+En user sel e asigno información dle usuario, pero al actualziar iniforamción del usuario ya se perdio. como le hariamos para que siempre que ingrese tenga algo por aca.
+
+Para ello en authStore.
+
+y desde el archivo principal App.vue y aca en el script hace rlos siguinete
+
+Y trabajar con el ciclo de vida del componente.
+
+Para ello vamos a hacer lo siguiente.
+
+Queremos llamar a la función onMounted, esta función permite que le pase dentro otra función y cualuiqrr cosa que yo coloque entre esta estq etiqueta de apetura y cierre.
+
+Se va a ejecutar cuando todo mi componente se haya cargado para evitar cualquier inconveniente, entonces, lo que hacemos
+
+Es llamar a nuestra tienda, vamos a colocar unimport
+
+useAuthSotre y vamos a inicializar nuetsra tienda definiendo una constante que se llame authStoree y vamos a inicializar esta tienda y ya con la tienda aca.
+
+Queremos esperar a que el componente se haya cargado satisfactoriamente, llamamos a latienda y vamos a ejecutar el metodo fectchUser.
+
+Para que busque la información del usuario autenticado, esto se trata de una funcion asincrona y para ello nos dirigimos dentro de la funcion onMounyted y colocamos dentro async indicandoloe que esperamos la respuesta, y dentro de esto colocamos un try catch que mouestre en consola el error de verlo, y esperamos la respuesta de la información del usuario.
+
+Si logra obtener la informaicón del usuario, lo que se hara es mostrarlo en consola
+
+console.log, accedemos a nuesra tienda y accedemos a la inforamción del usuario.
+
+Queremos actualizar en consola e inspaeccionamos y vamos a conocola y tenemos la informaicón del usuario autnticado
+
+con los datos
+
+el id, name, email, etc.
+
+entonces desde este momento vamos a poder acceder a la inforamción dle usuario autenticado desde nuestra tienda a traves d el apropiedad computada :
+
+const user = computed(() => user.value)
+
+conesto ya esta casi concluido lo que tiene que ver con el sistema de login, faltaria hacer lo siguiente.
+
+Cerramos sesión y queremos habilitar el remember me
+
+La idea es que si el usuario marca esta opción nosotros deveriamos mantener siempre activas su sesión entonces si llegase un momento y un token esta caducado, lo que deberiamos hacer es generar un nuevo token haciendo una petición hacia el metodo refresh)()
+
+Eso se vera en otro capitulo.
+
+Con esto terminamos la sección de login, que es el de registros.
